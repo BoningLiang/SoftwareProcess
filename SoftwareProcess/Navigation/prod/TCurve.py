@@ -61,25 +61,37 @@ class TCurve(object):
         result = base ** exponent
         return result
     
+    def f0(self, u, n):
+        return u
+    
+    def f1(self, u, n):
+        return u**2
+    
+    def f2(self, u, n):
+        return u**6
+    
+    def f3(self, u, n):
+        return u**100
+    
     def integrate(self, t, n, f):
         epsilon = 0.001
         simpsonOld = 0
         simpsonNew = epsilon
         s = 4
         highBound = t
-        lowBound = 0
+        lowBound = 0.0
         while (abs((simpsonNew - simpsonOld)/simpsonNew)>epsilon):
             simpsonOld = simpsonNew
             w = (highBound - lowBound) / s
             summ = 0
 
             for i in range(0, s):
-                if i is 0 or s:
-                    summ = summ + f(lowBound + s * w , n)
+                if i is 0 or i is s:
+                    summ = summ + f(lowBound + i * w , n)
                 elif i % 2 is 1:
-                    summ = summ + 4 * f(lowBound + s * w , n)
+                    summ = summ + 4 * f(lowBound + i * w , n)
                 elif i % 2 is 0:
-                    summ = summ + 2 * f(lowBound + s * w , n)
+                    summ = summ + 2 * f(lowBound + i * w , n)
 
             simpsonNew = (w / 3) * summ
             s = s * 2
