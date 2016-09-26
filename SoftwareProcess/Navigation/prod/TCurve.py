@@ -74,7 +74,7 @@ class TCurve(object):
         return u**100
     
     def integrate(self, t, n, f):
-        epsilon = 0.001
+        epsilon = 0.00001
         simpsonOld = 0
         simpsonNew = epsilon
         s = 4
