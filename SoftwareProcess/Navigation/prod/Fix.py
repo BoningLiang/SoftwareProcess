@@ -6,7 +6,6 @@ Created on Oct 6, 2016
 import datetime
 import xml.dom.minidom
 from xml.dom.minidom import parse
-from lib2to3.fixer_util import String
 import time, datetime
 
 class Fix(object):
