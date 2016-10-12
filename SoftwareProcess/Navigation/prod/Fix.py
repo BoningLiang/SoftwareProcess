@@ -7,6 +7,8 @@ import datetime
 import xml.dom.minidom
 from xml.dom.minidom import parse
 import time, datetime
+import math
+import Angle
 
 class Fix(object):
 
@@ -47,12 +49,37 @@ class Fix(object):
             entryString = sightingHeader
             dateTimeOfWrite = self.getDateTime()
             entryString += dateTimeOfWrite + " "
+            theHorizon = sighting.getElementsByTagName("horizon")[0].childNodes[0].data
+            theHeight = sighting.getElementsByTagName("height")[0].childNodes[0].data
+            thePressure = sighting.getElementsByTagName("pressure")[0].childNodes[0].data
+            theTemperature = sighting.getElementsByTagName("temperature")[0].childNodes[0].data
+            theAltitude = sighting.getElementsByTagName("observation")[0].childNodes[0].data
+            
+            altitudeAngle = Angle.Angle()
+            observedAltitude = altitudeAngle.setDegreesAndMinutes(theAltitude)
+            
+            theHeight = float(theHeight)
+            
+            if theHorizon == "Natural":
+                dip = (-0.97 * math.sqrt(theHeight)) / 60
+            else:
+                dip = 0.0
+            
+            refraction = (0.00452 * float(thePressure)) / (273 + self.FahrenheitToCelsius(theTemperature)) / math.atan(observedAltitude)
+            
+            adjustedAltitude = observedAltitude + dip + refraction
+            
+            adjustedAltitudeAngle = Angle.Angle()
+            adjustedAltitudeAngle.setDegrees(adjustedAltitude)
+            adjustedAltitudeAngleStr = adjustedAltitudeAngle.getString()
             
             entryString += sighting.getElementsByTagName("body")[0].childNodes[0].data + "\t"
             entryString += sighting.getElementsByTagName("date")[0].childNodes[0].data + "\t"
             entryString += sighting.getElementsByTagName("time")[0].childNodes[0].data + "\t"
             
-            entryString += self.adjustedAltitude(sighting.getElementsByTagName("time")[0].childNodes[0].data)
+            entryString += str(adjustedAltitudeAngleStr)
+            
+#             entryString += self.adjustedAltitude(sighting.getElementsByTagName("time")[0].childNodes[0].data)
             
             print entryString
             entryString = ""
@@ -62,7 +89,11 @@ class Fix(object):
         return (self.approximateLatitude, self.approximateLongitude)
 
 # private
+    def FahrenheitToCelsius(self, fahrenheit):
+        celsius = (float(fahrenheit) - 32 ) / 1.8
+        return celsius
 
+# private
     def adjustedAltitude(self, altitude = 0):
         return "0d0.0"
 

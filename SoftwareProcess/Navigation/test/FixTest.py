@@ -23,3 +23,10 @@ class FixTest(unittest.TestCase):
         self.assertIsInstance(F.Fix('hello.log'), F.Fix)
         
         
+# 200 setSightingFile
+#
+#
+#
+# Happy path
+
+    
