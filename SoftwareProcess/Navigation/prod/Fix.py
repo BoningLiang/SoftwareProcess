@@ -16,14 +16,7 @@ class Fix(object):
     def __init__(self, logFile = 'log.txt'):
         functionName = "Fix.__init__: "
         
-        self.body = ""
-        self.date = ""
-        self.time = ""
-        self.observation = ""
-        self.height = 0
-        self.temperature = 72
-        self.pressure = 1010
-        self.horizon = "Natural"
+
         
         if not isinstance(logFile, basestring):
             raise ValueError(functionName)
