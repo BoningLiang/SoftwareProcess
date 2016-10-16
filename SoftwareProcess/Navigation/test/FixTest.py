@@ -8,6 +8,7 @@ class FixTest(unittest.TestCase):
 
 
     def setUp(self):
+        
         try:
             open("existingFile.txt","w")
         except:
@@ -36,7 +37,7 @@ class FixTest(unittest.TestCase):
 # 100 constructor
 #    input:    logFile
 #    outputs:    instance of Fix
-#                write "Start of log" to the log file
+#                writting "Start of log" to log file
 #    Happy path:
 #        logFile:
 #                ommited -> Fix()
@@ -84,7 +85,6 @@ class FixTest(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             F.Fix(43)
         self.assertEquals(expectedString, context.exception.args[0][0:len(expectedString)])  
-        
         
 # 200 setSightingFile
 #    input:    sightingFile    a string of "f.xml"
@@ -153,21 +153,21 @@ class FixTest(unittest.TestCase):
     
 
 # 400 FahrenheitToCelsius
-#
-#
-#
+
+
+
 # Happy path
-#     def test400_010_ShouldCalculateCelsius(self):
-#         myF = F.Fix()
-#         self.assertAlmostEquals(myF.FahrenheitToCelsius(70.0), 21.1111, 3)
-#          
-#     def test400_020_ShouldCalculateCelsius(self):
-#         myF = F.Fix()
-#         self.assertAlmostEquals(myF.FahrenheitToCelsius(0.0), -17.7777778, 3)
-#          
-#     def test400_030_ShouldCalculateCelsius(self):
-#         myF = F.Fix()
-#         self.assertAlmostEquals(myF.FahrenheitToCelsius(100.0), 37.7777778, 3)
+    def test400_010_ShouldCalculateCelsius(self):
+        myF = F.Fix()
+        self.assertAlmostEquals(myF.FahrenheitToCelsius(70.0), 21.1111, 3)
+          
+    def test400_020_ShouldCalculateCelsius(self):
+        myF = F.Fix()
+        self.assertAlmostEquals(myF.FahrenheitToCelsius(0.0), -17.7777778, 3)
+          
+    def test400_030_ShouldCalculateCelsius(self):
+        myF = F.Fix()
+        self.assertAlmostEquals(myF.FahrenheitToCelsius(100.0), 37.7777778, 3)
         
 
 

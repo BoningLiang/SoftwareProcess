@@ -15,13 +15,12 @@ class Fix(object):
 
     def __init__(self, logFile = 'log.txt'):
         functionName = "Fix.__init__: "
-        
 
-        
         if not isinstance(logFile, basestring):
-            raise ValueError(functionName)
+            raise ValueError(functionName + "logFile must be a String!")
         
         self.logFile = logFile
+        self.logFileString = logFile
         self.sightingFile = ''
         self.approximateLatitude = "0d0.0"
         self.approximateLongitude = "0d0.0"
@@ -123,11 +122,11 @@ class Fix(object):
 #private
     def calculateAdjustedAltitude(self, theHorizon, theHeight, thePressure, theTemperature, observedAltitude):
         if theHorizon == "Natural":
-            dip = (-0.97 * math.sqrt(theHeight)) / 60.0
+            dip = (-0.97 * math.sqrt(theHeight)) / 60
         else:
-            dip = 0.0
+            dip = 0
             
-        refraction = (0.00452 * float(thePressure)) / (273 + self.FahrenheitToCelsius(theTemperature)) / math.atan(observedAltitude)
+        refraction = (-0.00452 * float(thePressure)) / (273 + self.FahrenheitToCelsius(theTemperature)) / math.atan(observedAltitude)
         
         adjustedAltitude = observedAltitude + dip + refraction
         return adjustedAltitude
