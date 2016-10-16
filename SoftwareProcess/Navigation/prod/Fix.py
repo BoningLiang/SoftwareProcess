@@ -1,17 +1,9 @@
-'''
-Created on Oct 6, 2016
-
-@author: boningliang
-'''
-import datetime
 import xml.dom.minidom
-from xml.dom.minidom import parse
-import time, datetime
+import time
 import math
 import Angle
 
 class Fix(object):
-
 
     def __init__(self, logFile = 'log.txt'):
         functionName = "Fix.__init__: "
@@ -32,6 +24,15 @@ class Fix(object):
             self.logFile = open(logFile,'a')
             
         self.startOfLog()
+        
+        self.body = None
+        self.date = None
+        self.time = None
+        self.observation = None
+        self.height = None
+        self.temperature = None
+        self.pressure = None
+        self.horizon = None
 
     def setSightingFile(self, sightingFile):
         self.sightingFile = sightingFile
@@ -44,61 +45,30 @@ class Fix(object):
             return True
             
     def getSightings(self):
-        sightingHeader = "LOG: "
-        dateTimeOfWrite = ""
+
         entryString = ""
         domTree = xml.dom.minidom.parse(self.sightingFile)
         sightingTree = domTree.documentElement
         sightings = sightingTree.getElementsByTagName("sighting")
-        
-        for sighting in sightings:
-            entryString = sightingHeader
-            dateTimeOfWrite = self.getDateTime()
-            entryString += dateTimeOfWrite + " "
-            
-            if not len(sighting.getElementsByTagName("horizon")[0].childNodes) == 0:
-                theHorizon = sighting.getElementsByTagName("horizon")[0].childNodes[0].data
-            else:
-                theHorizon = "Natural" 
-    
-            if not len(sighting.getElementsByTagName("height")[0].childNodes) == 0:
-                theHeight = float(sighting.getElementsByTagName("height")[0].childNodes[0].data)
-            else:
-                theHeight = 0
-            
-            if theHeight == "":
-                theHeight = 0
-            
-            if not len(sighting.getElementsByTagName("pressure")[0].childNodes) == 0:
-                thePressure = float(sighting.getElementsByTagName("pressure")[0].childNodes[0].data)
-            else:
-                thePressure = 1010              
-            
-            if not len(sighting.getElementsByTagName("temperature")[0].childNodes) == 0:
-                theTemperature = float(sighting.getElementsByTagName("temperature")[0].childNodes[0].data)
-            else:
-                theTemperature = 72
-            
-            theAltitude = sighting.getElementsByTagName("observation")[0].childNodes[0].data
-            
-            altitudeAngle = Angle.Angle()
-            observedAltitude = altitudeAngle.setDegreesAndMinutes(theAltitude)
 
-            theHeight = float(theHeight)
+        for sighting in sightings:
             
-            adjustedAltitude = self.calculateAdjustedAltitude(theHorizon, theHeight, thePressure, theTemperature, observedAltitude)
+            self.handleDomTree(sighting)
+
+            entryString = self.entryHeader()
+             
+            adjustedAltitude = self.calculateAdjustedAltitude()
             
             adjustedAltitudeAngle = Angle.Angle()
             adjustedAltitudeAngle.setDegrees(adjustedAltitude)
             adjustedAltitudeAngleStr = adjustedAltitudeAngle.getString()
             
-            entryString += sighting.getElementsByTagName("body")[0].childNodes[0].data + "\t"
-            entryString += sighting.getElementsByTagName("date")[0].childNodes[0].data + "\t"
-            entryString += sighting.getElementsByTagName("time")[0].childNodes[0].data + "\t"
+            entryString += self.body + "\t"
+            entryString += self.date + "\t"
+            entryString += self.time + "\t"
             
             entryString += str(adjustedAltitudeAngleStr)
             
-#             entryString += self.adjustedAltitude(sighting.getElementsByTagName("time")[0].childNodes[0].data)
             self.logFile.write(entryString+"\n")
             self.logFile.flush()
 
@@ -108,8 +78,39 @@ class Fix(object):
         
         return (self.approximateLatitude, self.approximateLongitude)
 
-    def getAttributes(self):
-        pass
+#private
+    def handleDomTree(self, sighting):
+                          
+        self.body = sighting.getElementsByTagName("body")[0].childNodes[0].data
+        self.date = sighting.getElementsByTagName("date")[0].childNodes[0].data
+        self.time = sighting.getElementsByTagName("time")[0].childNodes[0].data
+        
+        self.observation = sighting.getElementsByTagName("observation")[0].childNodes[0].data
+        altitudeAngle = Angle.Angle()
+        self.observation = altitudeAngle.setDegreesAndMinutes(self.observation)
+        
+        if not len(sighting.getElementsByTagName("height")[0].childNodes) == 0:
+            self.height = float(sighting.getElementsByTagName("height")[0].childNodes[0].data)
+        else:
+            self.height = 0
+        self.height = float(self.height)
+
+        if not len(sighting.getElementsByTagName("temperature")[0].childNodes) == 0:
+            self.temperature = float(sighting.getElementsByTagName("temperature")[0].childNodes[0].data)
+        else:
+            self.temperature = 72
+            
+        
+        if not len(sighting.getElementsByTagName("pressure")[0].childNodes) == 0:
+            self.pressure = float(sighting.getElementsByTagName("pressure")[0].childNodes[0].data)
+        else:
+            self.pressure = 1010
+            
+        
+        if not len(sighting.getElementsByTagName("horizon")[0].childNodes) == 0:
+            self.horizon = sighting.getElementsByTagName("horizon")[0].childNodes[0].data
+        else:
+            self.horizon = "Natural"
 
 # private
     def FahrenheitToCelsius(self, fahrenheit):
@@ -120,15 +121,15 @@ class Fix(object):
     def adjustedAltitude(self, altitude = 0):
         return "0d0.0"
 #private
-    def calculateAdjustedAltitude(self, theHorizon, theHeight, thePressure, theTemperature, observedAltitude):
-        if theHorizon == "Natural":
-            dip = (-0.97 * math.sqrt(theHeight)) / 60
+    def calculateAdjustedAltitude(self):
+        if self.horizon == "Natural":
+            dip = (-0.97 * math.sqrt(self.height)) / 60
         else:
             dip = 0
             
-        refraction = (-0.00452 * float(thePressure)) / (273 + self.FahrenheitToCelsius(theTemperature)) / math.atan(observedAltitude)
+        refraction = (-0.00452 * float(self.pressure)) / (273 + self.FahrenheitToCelsius(self.temperature)) / math.atan(self.observation)
         
-        adjustedAltitude = observedAltitude + dip + refraction
+        adjustedAltitude = self.observation + dip + refraction
         return adjustedAltitude
 
 #     private    
@@ -144,6 +145,7 @@ class Fix(object):
     def EndOfLog(self):
         self.logFile.write(self.entryHeader() + "End of sighting file: " +self.sightingFile+"\n")
         self.logFile.flush()
+        self.logFile.close()
     
 #     private    
     def entryHeader(self):
@@ -153,18 +155,3 @@ class Fix(object):
 #     private
     def getDateTime(self):
         return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-#         return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-#         return datetime.datetime.now()
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    

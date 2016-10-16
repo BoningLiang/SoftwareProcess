@@ -1,9 +1,3 @@
-'''
-Created on Sep 1, 2016
-
-@author: boningliang
-'''
-
 class Angle(object):
     
     def __init__(self):

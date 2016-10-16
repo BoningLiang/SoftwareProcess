@@ -12,7 +12,6 @@ class TCurve(object):
             raise ValueError(functionName + "invalid n")
         self.n = n
 
-    
     def p(self, t=None, tails=1):
         functionName = "TCurve.p: "
         if(t == None):
@@ -61,18 +60,6 @@ class TCurve(object):
         result = base ** exponent
         return result
     
-    def f0(self, u, n):
-        return u
-    
-    def f1(self, u, n):
-        return u**2
-    
-    def f2(self, u, n):
-        return u**6
-    
-    def f3(self, u, n):
-        return u**100
-    
     def integrate(self, t, n, f):
         epsilon = 0.00001
         simpsonOld = 0
@@ -97,9 +84,3 @@ class TCurve(object):
             s = s * 2
 
         return simpsonNew
-        
-        
-    
-        
-            
-        

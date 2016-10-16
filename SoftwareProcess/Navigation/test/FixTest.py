@@ -1,7 +1,6 @@
 import unittest
 import Navigation.prod.Fix as F
 import os
-from test.pickletester import MyFloat
 
 class FixTest(unittest.TestCase):
 
