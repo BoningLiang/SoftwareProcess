@@ -53,7 +53,7 @@ class FixTest(unittest.TestCase):
         try:
             logTxtFile = open("log.txt")
             entryFirstLine = logTxtFile.readline()
-            if "Start of log" not in entryFirstLine:
+            if "Log file" not in entryFirstLine:
                 self.fail()
         except:
             self.fail()
@@ -64,7 +64,7 @@ class FixTest(unittest.TestCase):
         try:
             logTxtFile = open("myLog.txt")
             entryFirstLine = logTxtFile.readline()
-            if "Start of log" not in entryFirstLine:
+            if "Log file" not in entryFirstLine:
                 self.fail()
         except:
             self.fail()
@@ -74,7 +74,7 @@ class FixTest(unittest.TestCase):
         try:
             logTxtFile = open("existingFile.txt")
             entryFirstLine = logTxtFile.readline()
-            if "Start of log" not in entryFirstLine:
+            if "Log file" not in entryFirstLine:
                 self.fail()
         except:
             self.fail()
@@ -169,4 +169,7 @@ class FixTest(unittest.TestCase):
         self.assertAlmostEquals(myF.FahrenheitToCelsius(100.0), 37.7777778, 3)
         
 
-
+# 500 setAriesFile
+#
+# Happy path
+#
