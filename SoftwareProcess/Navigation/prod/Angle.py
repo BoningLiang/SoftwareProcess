@@ -1,14 +1,15 @@
+
 class Angle(object):
     
     def __init__(self):
         self.degrees = 0
     
-    def setDegrees(self,degrees):
-        if(isinstance(degrees, float)):
+    def setDegrees(self, degrees = 0.0):
+        if isinstance(degrees, float) or isinstance(degrees, int):
             self.degrees = degrees % 360
-            return self.degrees
+            return float(self.degrees)
         else:
-            raise ValueError("Value Error")
+            raise ValueError("Angle.setDegrees: Value Error")
     
     def checkDegrees(self, degreeString):
         if(degreeString is None):
@@ -41,50 +42,61 @@ class Angle(object):
         if(len(minutePortions) == 1):
             return 1
         else:
-            minutePoints = minutePortions[1].split()
-            if(len(minutePoints)!=1):
+            if int(minutePortions[1])>9:
                 return 0
             else:
                 return 1
+#             minutePoints = minutePortions[1].split()
+#             if(len(minutePoints)!=1):
+#                 return 0
+#             else:
+#                 return 1
     
     def setDegreesAndMinutes(self, angleString):
-        if(angleString is None):
-            raise ValueError('Value Error')
+        if(angleString is None or angleString is ""):
+            raise ValueError('Angle.setDegreesAndMinutes:')
         else:
             if(isinstance(angleString, basestring)):
                 portions = angleString.split('d')
-                if(len(portions)!=2):
-                    raise ValueError('Value Error')
+                if len(portions) is not 2:
+                    raise ValueError('Angle.setDegreesAndMinutes:')
                 else:
                     if(self.checkDegrees(portions[0]) == 1):
                         if(self.checkMinutes(portions[1]) == 1):
                             self.interpretDegreesAndMinutes(int(portions[0]), float(portions[1]))
                             return self.degrees
                         else:
-                            raise ValueError('Value Error')
+                            raise ValueError('Angle.setDegreesAndMinutes:')
                     else:
-                        raise ValueError('Value Error')
+                        raise ValueError('Angle.setDegreesAndMinutes:')
             else:
-                raise ValueError('Value Error')
+                raise ValueError('Angle.setDegreesAndMinutes:')
                 
     def interpretDegreesAndMinutes(self, angleDegree, angleMinute):
-        self.degrees = angleDegree + angleMinute/60
+        if angleDegree<0:
+            angleDegree = -angleDegree
+            self.degrees = 360.0 - (angleDegree+angleMinute/60.0)
+        elif angleDegree>=0:
+            self.degrees = angleDegree + angleMinute/60.0
         self.setDegrees(self.degrees)
     
-    def add(self, angle):
+    def add(self, angle = 0):
         if(isinstance(angle, Angle)):
             self.degrees = self.degrees + angle.degrees
             self.setDegrees(self.degrees)
+            return float(self.degrees)
+        else:
+            raise ValueError('Angle.add:')
+    
+    def subtract(self, angle = 0):
+        if isinstance(angle, Angle):
+            self.degrees = self.degrees - angle.degrees
+            self.setDegrees(self.degrees)
             return self.degrees
         else:
-            raise ValueError('Value Error')
+            raise ValueError('Angle.subtract: ')
     
-    def subtract(self, angle):
-        self.degrees = self.degrees - angle.degrees
-        self.setDegrees(self.degrees)
-        return self.degrees
-    
-    def compare(self, angle):
+    def compare(self, angle = 0):
         if(isinstance(angle, Angle)):
             if(self.degrees < angle.degrees ):
                 return -1
@@ -93,7 +105,7 @@ class Angle(object):
             if(self.degrees == angle.degrees ):
                 return 0
         else:
-            raise ValueError('Value Error')
+            raise ValueError('Angle.compare: miss or wrong parameter angle')
 
     def getString(self):
         angleDegreeInt = int(self.degrees)
@@ -103,4 +115,4 @@ class Angle(object):
         return angleDegreeString
         
     def getDegrees(self):
-        return self.degrees
+        return float(self.degrees)

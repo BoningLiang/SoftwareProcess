@@ -1,0 +1,2 @@
+LOG: 2016-10-31 21:44:55 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/logb1a185d85c94.txt
+LOG: 2016-10-31 21:44:55 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_ValidOneStarArtificialHorizon.xml

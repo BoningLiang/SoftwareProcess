@@ -1,0 +1,2 @@
+LOG: 2016-10-31 22:37:42 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log8acf77a3632a.txt
+LOG: 2016-10-31 22:37:42 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_ValidWithExtraneousTags.xml

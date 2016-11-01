@@ -3,19 +3,21 @@ import time
 import math
 import Angle
 import os
-from datetime import datetime
+import re
 
 class Fix(object):
 
     def __init__(self, logFile = 'log.txt'):
         functionName = "Fix.__init__: "
+        self.starFileString = ""
         self.sightingErrors = 0
         if not isinstance(logFile, basestring):
             raise ValueError(functionName + "logFile must be a String!")
-        
+        if len(logFile) < 1:
+            raise ValueError(functionName)
         self.logFile = logFile
         self.logFileString = logFile
-        self.sightingFile = ''
+        self.sightingFile = ""
         self.approximateLatitude = "0d0.0"
         self.approximateLongitude = "0d0.0"
         try:
@@ -37,53 +39,72 @@ class Fix(object):
         self.pressure = None
         self.horizon = None
 
-    def setSightingFile(self, sightingFile):
+    def setSightingFile(self, sightingFile = 0):
+        if sightingFile is 0:
+            raise ValueError('Fix.setSightingFile:')
         self.sightingFile = sightingFile
         self.sightingFileString = sightingFile
-        self.absoluteSightingFilePath = os.path.abspath(self.sightingFileString)
+        
+        if isinstance(sightingFile, int) or isinstance(sightingFile, float):
+            raise ValueError('Fix.setSightingFile:')
+        
+        if os.path.exists(sightingFile):
+            self.absoluteSightingFilePath = os.path.abspath(self.sightingFileString)
+        else:
+            raise ValueError('Fix.setSightingFile:')
+        if not os.path.realpath(self.absoluteSightingFilePath):
+            raise ValueError('Fix.setSightingFile:')
+        if ".xml" not in sightingFile:
+            raise ValueError('Fix.setSightingFile:')
+        sightingFileArray = sightingFile.split(".")
+        if sightingFileArray[0] == "":
+            raise ValueError('Fix.setSightingFile:')
+        
         self.startOfSightingFile()
         try:
             open(sightingFile, 'r')
-            return False
+            return sightingFile
         except:
-            open(sightingFile, 'w')
-            return True
+            raise ValueError('Fix.setSightingFile:')
+            return sightingFile
             
     def getSightings(self):
-
+        if self.sightingFile == "":
+            raise ValueError('Fix.getSightings:')
         entryString = ""
         domTree = xml.dom.minidom.parse(self.sightingFile)
         sightingTree = domTree.documentElement
         sightings = sightingTree.getElementsByTagName("sighting")
 
         for sighting in sightings:
-            self.handleDomTree(sighting)
-            if not self.body == "Unknown":
-                entryString = self.entryHeader()
-                 
-                adjustedAltitude = self.calculateAdjustedAltitude()
-                
-                adjustedAltitudeAngle = Angle.Angle()
-                adjustedAltitudeAngle.setDegrees(adjustedAltitude)
-                adjustedAltitudeAngleStr = adjustedAltitudeAngle.getString()
-                
-                entryString += self.body + "\t"
-                entryString += self.date + "\t"
-                entryString += self.time + "\t"            
-                
-                entryString += str(adjustedAltitudeAngleStr) + "\t"
-                
-                gha = self.getGHA()
-                entryString += gha[0] + "\t" +gha[1] + "\t"
-                
-                self.logFile.write(entryString+"\n")
-                self.logFile.flush()
-    
-                entryString = ""
-                
+            resultHandle = self.handleDomTree(sighting)
+            if resultHandle == 0:
+                raise ValueError('Fix.getSightings:')
             else:
-                self.sightingErrors+=1
-            
+                if not self.body == "Unknown":
+                    entryString = self.entryHeader()
+                     
+                    adjustedAltitude = self.calculateAdjustedAltitude()
+                    
+                    adjustedAltitudeAngle = Angle.Angle()
+                    adjustedAltitudeAngle.setDegrees(adjustedAltitude)
+                    adjustedAltitudeAngleStr = adjustedAltitudeAngle.getString()
+                    
+                    entryString += self.body + "\t"
+                    entryString += self.date + "\t"
+                    entryString += self.time + "\t"            
+                    
+                    entryString += str(adjustedAltitudeAngleStr) + "\t"
+                    gha = self.getGHA()
+                    entryString += gha[0] + "\t" +gha[1] + "\t"
+                    
+                    self.logFile.write(entryString+"\n")
+                    self.logFile.flush()
+        
+                    entryString = ""
+                    
+                else:
+                    self.sightingErrors+=1
         self.EndOfLog()
         
         return (self.approximateLatitude, self.approximateLongitude)
@@ -101,6 +122,7 @@ class Fix(object):
                 entryString = "Aries file:\t" + self.ariesAbsoluteFilePath
                 self.writeEntry(entryString)
                 self.ariesFile.close()
+                return self.ariesAbsoluteFilePath
                 
     
     def setStarFile(self, starFile):
@@ -116,16 +138,19 @@ class Fix(object):
                 entryString = "Star file:\t" + self.starAbsoluteFilePath
                 self.writeEntry(entryString)
                 self.starFile.close()
+                return self.starAbsoluteFilePath
 
     def getGHA(self):
         star = self.readStars()
-        if not star is None:
-            geographicPositionLatitude = star['latitude']
+        if star is not None:
             starSHAString = star['longitude']
+            geographicPositionLatitude = star['latitude']
             starSHAangle = Angle.Angle()
             starSHAangle.setDegreesAndMinutes(starSHAString)
             starSHA = starSHAangle.getDegrees()
             aries = self.readAries()
+            if aries == 0:
+                return ("0d0.0", "0d0.0")
             if not aries is None:
                 aries1GHA = Angle.Angle()
                 aries2GHA = Angle.Angle()
@@ -173,69 +198,145 @@ class Fix(object):
                                  'gha': ariesFileLineArray[2]}
                     tag = tag + 1
             
+        if tag == 0:
+            return 0
+            
             
            
     
     def readStars(self):
-        self.starFile = open(self.starFileString)
-        starFileEntries = self.starFile.readlines()
-        starEntryDic = {}
-        for starFileEntry in starFileEntries:
-            starFileLineArray = starFileEntry.split()
-            if(starFileLineArray[0] == self.body):
-                date1 = time.strptime(self.date, "%Y-%m-%d")
-                date2 = time.strptime(starFileLineArray[1], "%m/%d/%y")
-                if date1>date2:
-                    starEntryDic = {'body': starFileLineArray[0], 
-                     'date': starFileLineArray[1], 
-                     'longitude': starFileLineArray[2],
-                     'latitude': starFileLineArray[3]}
-                else:
-                    return starEntryDic
+        if self.starFileString == "":
+            raise ValueError("Fix.readStars:")
+        else:
+            self.starFile = open(self.starFileString)
+            starFileEntries = self.starFile.readlines()
+            starEntryDic = {'body': '', 'date': '', 'longitude': '','latitude':'' }
+            loopTime = 0
+            for starFileEntry in starFileEntries:
+                starFileLineArray = starFileEntry.split()
+                if(starFileLineArray[0] == self.body):
+                    date1 = time.strptime(self.date, "%Y-%m-%d")
+                    date2 = time.strptime(starFileLineArray[1], "%m/%d/%y")
+                    if date1>date2 or loopTime == 0:
+                        starEntryDic = {'body': starFileLineArray[0], 
+                         'date': starFileLineArray[1],
+                         'longitude': starFileLineArray[2],
+                         'latitude': starFileLineArray[3]}
+                        loopTime += 1
+                    else:
+                        return starEntryDic
 
 #private
     def handleDomTree(self, sighting):
-                          
-        self.body = sighting.getElementsByTagName("body")[0].childNodes[0].data
+        timeStr = "^(?P<hour>[0-2]?[0-3]):(?P<minute>[0-5]?[0-9]):(?P<second>[0-5]?[0-9])$"
+        dateStr = "^(?P<year>[0-9]{4})\-(?P<month>[0-3]?[0-9])\-(?P<day>[0-3]?[0-9])$"
+        
+        if len(sighting.getElementsByTagName("body")) is not 0:
+            if len(sighting.getElementsByTagName("body")[0].childNodes) is not 0:              
+                self.body = sighting.getElementsByTagName("body")[0].childNodes[0].data
+            else:
+                return 0
+        else:
+            return 0
+        
         self.date = sighting.getElementsByTagName("date")[0].childNodes[0].data
-        self.time = sighting.getElementsByTagName("time")[0].childNodes[0].data
+        
+        if len(sighting.getElementsByTagName("date")) is not 0:
+            if len(sighting.getElementsByTagName("date")[0].childNodes) is not 0:
+                self.date = sighting.getElementsByTagName("date")[0].childNodes[0].data
+                isDate = re.search(dateStr, self.date)
+                if not isDate:
+                    return 0
+        
+        if len(sighting.getElementsByTagName("time")) is not 0:
+            if len(sighting.getElementsByTagName("time")[0].childNodes) is not 0:
+                self.time = sighting.getElementsByTagName("time")[0].childNodes[0].data
+                isTime = re.search(timeStr, self.time)
+                if not isTime:
+                    return 0
+                
         
         self.observation = sighting.getElementsByTagName("observation")[0].childNodes[0].data
+        observationTestAngle = Angle.Angle()
+        try:
+            observationTestAngle.setDegreesAndMinutes(self.observation)
+        except:
+            return 0
+        
         altitudeAngle = Angle.Angle()
         self.observation = altitudeAngle.setDegreesAndMinutes(self.observation)
         
         if len(sighting.getElementsByTagName("height")) is not 0:
-            if len(sighting.getElementsByTagName("height")) is not 0:
-                self.height = float(sighting.getElementsByTagName("height")[0].childNodes[0].data)
+            if len(sighting.getElementsByTagName("height")[0].childNodes) is not 0:
+                self.height = sighting.getElementsByTagName("height")[0].childNodes[0].data
+                try:
+                    float(self.height)
+                except:
+                    isFloat = False
+                else:
+                    isFloat = True
+                if not isFloat:
+                    return 0
             else:
                 self.height = 0.0
         else:
             self.height = 0.0
 
         if len(sighting.getElementsByTagName("temperature")) is not 0:
-            if len(sighting.getElementsByTagName("temperature")) is not 0:
+            if len(sighting.getElementsByTagName("temperature")[0].childNodes) is not 0:
                 self.temperature = float(sighting.getElementsByTagName("temperature")[0].childNodes[0].data)
+                try:
+                    int(self.temperature)
+                except:
+                    isTemperature = False
+                else:
+                    if self.temperature <=120 and self.temperature >=-20:
+                        isTemperature = True
+                    else:
+                        isTemperature = False
+                if not isTemperature:
+                    return 0
             else:
-                self.temperature = 72
+                self.temperature = 72.0
         else:
-            self.temperature = 72
+            self.temperature = 72.0
         
             
         if len(sighting.getElementsByTagName("pressure")) is not 0:
             if not len(sighting.getElementsByTagName("pressure")[0].childNodes) == 0:
-                self.pressure = float(sighting.getElementsByTagName("pressure")[0].childNodes[0].data)
+                self.pressure = sighting.getElementsByTagName("pressure")[0].childNodes[0].data
+                try:
+                    int(self.pressure)
+                except:
+                    isPressure = False
+                else:
+                    self.pressure = int(self.pressure)
+                    if self.pressure <=1100 and self.pressure >=100:
+                        isPressure = True
+                    else:
+                        isPressure = False
+                if not isPressure:
+                    return 0
+                
             else:
                 self.pressure = 1010
         else:
             self.pressure = 1010
-            
+        
         if len(sighting.getElementsByTagName("horizon")) is not 0:
             if not len(sighting.getElementsByTagName("horizon")[0].childNodes) == 0:
                 self.horizon = sighting.getElementsByTagName("horizon")[0].childNodes[0].data
+                if not (self.horizon == 'Artificial' or 
+                        self.horizon =='Natural' or 
+                        self.horizon =='artificial' or 
+                        self.horizon =='natural'):
+                    return 0
             else:
                 self.horizon = "Natural"
         else:
             self.horizon = "Natural"
+        
+        return 1
 
 # private
     def FahrenheitToCelsius(self, fahrenheit):
@@ -248,6 +349,7 @@ class Fix(object):
 #private
     def calculateAdjustedAltitude(self):
         if self.horizon == "Natural":
+            self.height = float(self.height)
             dip = (-0.97 * math.sqrt(self.height)) / 60
         else:
             dip = 0
@@ -259,6 +361,7 @@ class Fix(object):
 
 #     private    
     def startOfLog(self):
+#         self.logFile.write(self.entryHeader() + "Start of log" + "\n")
         self.logFile.write(self.entryHeader() + "Log file:\t" + self.logAbsoluteFilePath + "\n")
         self.logFile.flush()
 

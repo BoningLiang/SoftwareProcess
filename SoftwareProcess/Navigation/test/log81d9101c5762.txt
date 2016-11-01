@@ -1,0 +1,2 @@
+LOG: 2016-10-31 23:53:22 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log81d9101c5762.txt
+LOG: 2016-10-31 23:53:22 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_ValidOneStarWithDefaultValues.xml
