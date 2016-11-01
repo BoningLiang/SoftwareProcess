@@ -1,4 +1,0 @@
-LOG: 2016-10-31 23:39:46 Start of log
-LOG: 2016-10-31 23:39:46 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log4c0b4562c326.txt
-LOG: 2016-10-31 23:39:46 Start of log
-LOG: 2016-10-31 23:39:46 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log4c0b4562c326.txt

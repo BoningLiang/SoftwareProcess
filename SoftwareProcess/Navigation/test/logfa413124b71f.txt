@@ -1,3 +1,0 @@
-LOG: 2016-10-31 22:37:03 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/logfa413124b71f.txt
-LOG: 2016-10-31 22:37:03 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_ValidWithNoSightings.xml
-LOG: 2016-10-31 22:37:03 Sighting errors: 0

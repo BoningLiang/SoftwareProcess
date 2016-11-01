@@ -1,2 +1,0 @@
-LOG: 2016-11-01 02:42:48 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/logebfa27553c56.txt
-LOG: 2016-11-01 02:42:48 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_ValidOneStarSighting.xml

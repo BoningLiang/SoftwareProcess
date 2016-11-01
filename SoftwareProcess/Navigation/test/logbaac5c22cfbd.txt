@@ -1,4 +1,0 @@
-LOG: 2016-11-01 01:43:23 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/logbaac5c22cfbd.txt
-LOG: 2016-11-01 01:43:23 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_ValidOneStarWithDefaultValues.xml
-LOG: 2016-11-01 01:43:23 Star file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/stars.txt
-LOG: 2016-11-01 01:43:23 Aries file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/aries.txt

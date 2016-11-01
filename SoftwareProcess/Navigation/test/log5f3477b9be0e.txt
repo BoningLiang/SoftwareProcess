@@ -1,3 +1,0 @@
-LOG: 2016-10-31 23:47:46 Start of log
-LOG: 2016-10-31 23:47:46 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log5f3477b9be0e.txt
-LOG: 2016-10-31 23:47:46 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_ValidWithExtraneousTags.xml

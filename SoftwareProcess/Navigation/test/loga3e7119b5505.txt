@@ -1,3 +1,0 @@
-LOG: 2016-10-31 23:41:41 Start of log
-LOG: 2016-10-31 23:41:41 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/loga3e7119b5505.txt
-LOG: 2016-10-31 23:41:41 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_ValidOneStarArtificialHorizon.xml
