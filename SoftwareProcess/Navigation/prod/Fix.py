@@ -4,6 +4,7 @@ import math
 import Angle
 import os
 import re
+from datetime import datetime
 
 class Fix(object):
 
@@ -81,7 +82,8 @@ class Fix(object):
         domTree.toprettyxml()
         sightingTree = domTree.documentElement
         sightings = sightingTree.getElementsByTagName("sighting")
-
+        
+        entryLists = []
         for sighting in sightings:
             resultHandle = self.handleDomTree(sighting)
             if resultHandle == 0:
@@ -89,30 +91,38 @@ class Fix(object):
             else:
                 if not self.body == "Unknown":
                     entryString = self.entryHeader()
+                    
                      
                     adjustedAltitude = self.calculateAdjustedAltitude()
                     
                     adjustedAltitudeAngle = Angle.Angle()
                     adjustedAltitudeAngle.setDegrees(adjustedAltitude)
                     adjustedAltitudeAngleStr = adjustedAltitudeAngle.getString()
-                    
-                    entryString += self.body + "\t"
-                    entryString += self.date + "\t"
-                    entryString += self.time + "\t"            
-                    
-                    entryString += str(adjustedAltitudeAngleStr) + "\t"
-                    
-                    self.logFile.write(entryString+"\n")
-                    self.logFile.flush()
-        
-                    entryString = ""
-                    
+                    myDatetime = datetime.strptime(self.date+' '+self.time, "%Y-%m-%d %H:%M:%S")
+                    entryDic = {'body':self.body, 'datetime':myDatetime, 'adjustedAltitude': adjustedAltitudeAngleStr}
+                    entryLists.append(entryDic)                    
                 else:
                     self.sightingErrors+=1
+        
+        i = 0
+        j = 0
+        lenOfEntry = len(entryLists)
+        for i in range(lenOfEntry-1):
+            for j in range(lenOfEntry-1):
+                if entryLists[j]['datetime']>entryLists[j+1]['datetime']:
+                    tempList = entryLists[j]
+                    entryLists[j] = entryLists[j+1]
+                    entryLists[j+1] = tempList
+                j += 1
+            i += 1
+            
+        for entryDic in entryLists:
+            entryString = entryDic['body']+"\t" + str(entryDic['datetime']) +"\t"+entryDic['adjustedAltitude']
+            self.writeEntry(entryString)
+            
         self.EndOfLog()
         
         return (self.approximateLatitude, self.approximateLongitude)
-
 
 #private
     def handleDomTree(self, sighting):
