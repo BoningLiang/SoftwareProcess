@@ -1,0 +1,2 @@
+LOG: 2016-11-01 16:53:06 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log2923d265fa35.txt
+LOG: 2016-11-01 16:53:06 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_ValidWithExtraneousTags.xml

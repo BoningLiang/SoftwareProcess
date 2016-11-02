@@ -1,0 +1,2 @@
+LOG: 2016-11-01 17:02:56 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log204930beab32.txt
+LOG: 2016-11-01 17:02:56 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_ValidOneStarWithDefaultValues.xml

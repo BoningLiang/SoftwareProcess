@@ -1,0 +1,8 @@
+LOG: 2016-11-01 17:03:07 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log71c83d00be7b.txt
+LOG: 2016-11-01 17:03:07 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_ValidMultipleStarSighting.xml
+LOG: 2016-11-01 17:03:07 Star file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/stars.txt
+LOG: 2016-11-01 17:03:07 Aries file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/aries.txt
+LOG: 2016-11-01 17:03:07 Canopus	2016-03-02	23:40:01	15d4.3	0d0.0	0d0.0	
+LOG: 2016-11-01 17:03:07 Sirius	2016-03-01	00:05:05	45d12.2	0d0.0	0d0.0	
+LOG: 2016-11-01 17:03:07 Sighting errors: 0
+LOG: 2016-11-01 17:03:07 End of sighting file: CA02_300_ValidMultipleStarSighting.xml

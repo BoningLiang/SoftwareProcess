@@ -1,0 +1,4 @@
+LOG: 2016-11-02 13:57:07 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log695b628a1a64.txt
+LOG: 2016-11-02 13:57:07 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_ValidWithNoSightings.xml
+LOG: 2016-11-02 13:57:07 Sighting errors: 0
+LOG: 2016-11-02 13:57:07 End of sighting file: CA02_300_ValidWithNoSightings.xml

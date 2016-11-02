@@ -1,0 +1,5 @@
+LOG: 2016-11-02 13:57:38 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log5aac379b57d6.txt
+LOG: 2016-11-02 13:57:38 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_ValidMultipleStarSighting.xml
+LOG: 2016-11-02 13:57:38 Canopus	2016-03-02	23:40:01	15d1.5	
+LOG: 2016-11-02 13:57:38 Sirius	2016-03-01	00:05:05	45d11.9	
+LOG: 2016-11-02 13:57:38 End of sighting file: CA02_300_ValidMultipleStarSighting.xml

@@ -243,12 +243,11 @@ class TestFix(unittest.TestCase):
         theFix.setSightingFile(testFile)
         theFix.setStarFile("stars.txt")
         theFix.setAriesFile("aries.txt")
-        theFix.getSightings()
-#         try:
-#             theFix.getSightings()
-#             self.assertTrue(True)
-#         except:
-#             self.fail("Major: getSightings failed on valid file with mixed indentation")  
+        try:
+            theFix.getSightings()
+            self.assertTrue(True)
+        except:
+            self.fail("Major: getSightings failed on valid file with mixed indentation")  
 
     def test300_030_ShouldLogOneSighting(self):
         testFile = "CA02_300_ValidOneStarSighting.xml"
@@ -378,7 +377,6 @@ class TestFix(unittest.TestCase):
     def test300_080_ShouldLogStarWithNaturalHorizon(self):
         testFile = "CA02_300_ValidOneStarNaturalHorizon.xml"
         targetStringList = ["Hadar", "2016-03-01", "23:40:01", "29d55.7"]
-        targetStringList = ["Hadar", "2016-03-01", "23:40:01"]
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
         theFix.setStarFile("stars.txt")
@@ -402,8 +400,7 @@ class TestFix(unittest.TestCase):
 
     def test300_080_ShouldLogStarWithArtificialHorizon(self):
         testFile = "CA02_300_ValidOneStarArtificialHorizon.xml"
-#         targetStringList = ["Hadar", "2016-03-01", "23:40:01", "29d55.7"]
-        targetStringList = ["Hadar", "2016-03-01", "23:40:01"]
+        targetStringList = ["Hadar", "2016-03-01", "23:40:01", "29d55.7"]
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
         theFix.setStarFile("stars.txt")
@@ -427,8 +424,7 @@ class TestFix(unittest.TestCase):
         
     def test300_090_ShouldLogStarWithDefaultSightingValues(self):
         testFile = "CA02_300_ValidOneStarWithDefaultValues.xml"
-#         targetStringList = ["Hadar", "2016-03-01", "23:40:01", "29d59.9"]
-        targetStringList = ["Hadar", "2016-03-01", "23:40:01"]
+        targetStringList = ["Hadar", "2016-03-01", "23:40:01", "29d59.9"]
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
         theFix.setStarFile("stars.txt")

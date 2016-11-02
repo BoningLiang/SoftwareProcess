@@ -1,0 +1,6 @@
+LOG: 2016-11-01 04:30:48 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log3d8173937851.txt
+LOG: 2016-11-01 04:30:48 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_ValidOneStarArtificialHorizon.xml
+LOG: 2016-11-01 04:30:48 Star file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/stars.txt
+LOG: 2016-11-01 04:30:48 Aries file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/aries.txt
+LOG: 2016-11-01 04:30:48 Hadar	2016-03-01	23:40:01	30d0.9	0d0.0	0d0.0	
+LOG: 2016-11-01 04:30:48 Sighting errors: 0
