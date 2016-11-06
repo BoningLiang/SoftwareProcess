@@ -1,0 +1,2 @@
+LOG: 2016-11-06 17:46:26 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/logea4f90492d0d.txt
+LOG: 2016-11-06 17:46:26 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_InvalidDate.xml

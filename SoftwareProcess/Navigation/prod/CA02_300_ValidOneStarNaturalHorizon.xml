@@ -1,0 +1,12 @@
+<fix>
+	<sighting>
+		<body>Hadar</body>
+		<date>2016-03-01</date>
+		<time>23:40:01</time>
+		<observation>030d01.5</observation>
+		<height>19.0</height>
+		<temperature>85</temperature>
+		<pressure> 1000 </pressure>
+		<horizon>natural</horizon>
+	</sighting>
+</fix>			

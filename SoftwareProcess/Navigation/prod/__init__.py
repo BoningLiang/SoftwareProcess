@@ -32,19 +32,21 @@
 # print t[1]
 # print t[0] == ""
 
-# import Fix
-#            
-# theFix = Fix.Fix()
-#       
-# testFile = "CA02_300_ValidWithExtraneousTags.xml"
-#       
-# theFix.setSightingFile(testFile)
-#          
-# starFilePath = theFix.setStarFile("stars.txt")
-#          
-# ariesFilePath = theFix.setAriesFile("aries.txt")
-#          
-# approximatePosition = theFix.getSightings()
+import Fix
+            
+theFix = Fix.Fix()
+       
+# testFile = "CA02_300_ValidWithMixedIndentation.xml"
+
+testFile = "sightingFile.xml"
+       
+theFix.setSightingFile(testFile)
+          
+starFilePath = theFix.setStarFile("stars.txt")
+          
+ariesFilePath = theFix.setAriesFile("aries.txt")
+          
+approximatePosition = theFix.getSightings()
 
 
 # test1 = "a"

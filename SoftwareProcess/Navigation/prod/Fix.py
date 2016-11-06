@@ -20,6 +20,10 @@ class Fix(object):
         self.sightingFile = ""
         self.approximateLatitude = "0d0.0"
         self.approximateLongitude = "0d0.0"
+        
+        self.starFileString = "stars.txt"
+        self.ariesFileString = "aries.txt"
+        
         try:
             self.logFile = open(logFile,'r')
         except IOError:
@@ -52,6 +56,7 @@ class Fix(object):
             self.absoluteSightingFilePath = os.path.abspath(self.sightingFileString)
         else:
             raise ValueError('Fix.setSightingFile:')
+        
         if not os.path.realpath(self.absoluteSightingFilePath):
             raise ValueError('Fix.setSightingFile:')
         if ".xml" not in sightingFile:
@@ -63,16 +68,21 @@ class Fix(object):
         self.startOfSightingFile()
         try:
             open(sightingFile, 'r')
-            return sightingFile
         except:
             raise ValueError('Fix.setSightingFile:')
-            return sightingFile
+        return self.absoluteSightingFilePath
             
     def getSightings(self):
         if self.sightingFile == "":
             raise ValueError('Fix.getSightings:')
         entryString = ""
-        domTree = xml.dom.minidom.parse(self.sightingFile)
+        xmlFile = open(self.sightingFile)
+        xmlFileLines = xmlFile.readlines()
+        xmlFileString = ""
+        for xmlFileLine in xmlFileLines:
+            xmlFileString += xmlFileLine
+        domTree = xml.dom.minidom.parseString(xmlFileString)
+        domTree.toprettyxml()
         sightingTree = domTree.documentElement
         sightings = sightingTree.getElementsByTagName("sighting")
 
@@ -109,36 +119,68 @@ class Fix(object):
         
         return (self.approximateLatitude, self.approximateLongitude)
     
-    def setAriesFile(self, ariesFile):
+    def setAriesFile(self, ariesFile = 0):
+        if ariesFile is 0:
+            raise ValueError('Fix.setAriesFile:')
+        
         entryString = ""
         self.ariesFileString = ariesFile
+        
+        if isinstance(ariesFile, int) or isinstance(ariesFile, float):
+            raise ValueError('Fix.setAriesFile:')
+        
+        
+        if ".txt" not in ariesFile:
+            raise ValueError('Fix.setAriesFile:')
+        ariesFileArray = ariesFile.split(".")
+        if ariesFileArray[0] == "":
+            raise ValueError('Fix.setAriesFile:')
+        
         if(isinstance(ariesFile, str)):
             if(os.path.exists(ariesFile)):
                 try:
                     self.ariesFile = open(ariesFile)
                 except:
-                    raise ValueError()
+                    raise ValueError("Fix.setAriesFile:")
                 self.ariesAbsoluteFilePath = os.path.abspath(ariesFile)
                 entryString = "Aries file:\t" + self.ariesAbsoluteFilePath
                 self.writeEntry(entryString)
                 self.ariesFile.close()
                 return self.ariesAbsoluteFilePath
+            else:
+                raise ValueError("Fix.setAriesFile:")
                 
     
-    def setStarFile(self, starFile):
+    def setStarFile(self, starFile = 0):
+        if starFile == 0:
+            raise ValueError('Fix.setStarFile:')
+        
         entryString = ""
         self.starFileString = starFile
+        
+        if isinstance(starFile, int) or isinstance(starFile, float):
+            raise ValueError('Fix.setStarFile:')
+        
+        if ".txt" not in starFile:
+            raise ValueError('Fix.setStarFile:')
+        starFileArray = starFile.split(".")
+        if starFileArray[0] == "":
+            raise ValueError('Fix.setStarFile:')
+
+        
         if(isinstance(starFile, str)):
             if(os.path.exists(starFile)):
                 try:
                     self.starFile = open(starFile)
                 except:
-                    raise ValueError()
+                    raise ValueError("Fix.setStarFile:")
                 self.starAbsoluteFilePath = os.path.abspath(starFile)
                 entryString = "Star file:\t" + self.starAbsoluteFilePath
                 self.writeEntry(entryString)
                 self.starFile.close()
                 return self.starAbsoluteFilePath
+            else:
+                raise ValueError("Fix.setStarFile:")
 
     def getGHA(self):
         star = self.readStars()
@@ -235,8 +277,10 @@ class Fix(object):
             if len(sighting.getElementsByTagName("body")[0].childNodes) is not 0:              
                 self.body = sighting.getElementsByTagName("body")[0].childNodes[0].data
             else:
+                print 1
                 return 0
         else:
+            print 2
             return 0
         
         self.date = sighting.getElementsByTagName("date")[0].childNodes[0].data
@@ -246,6 +290,7 @@ class Fix(object):
                 self.date = sighting.getElementsByTagName("date")[0].childNodes[0].data
                 isDate = re.search(dateStr, self.date)
                 if not isDate:
+                    print 3
                     return 0
         
         if len(sighting.getElementsByTagName("time")) is not 0:
@@ -253,6 +298,7 @@ class Fix(object):
                 self.time = sighting.getElementsByTagName("time")[0].childNodes[0].data
                 isTime = re.search(timeStr, self.time)
                 if not isTime:
+                    print 4
                     return 0
                 
         
@@ -261,6 +307,7 @@ class Fix(object):
         try:
             observationTestAngle.setDegreesAndMinutes(self.observation)
         except:
+            print 5
             return 0
         
         altitudeAngle = Angle.Angle()
@@ -276,6 +323,7 @@ class Fix(object):
                 else:
                     isFloat = True
                 if not isFloat:
+                    print 6
                     return 0
             else:
                 self.height = 0.0
@@ -295,6 +343,7 @@ class Fix(object):
                     else:
                         isTemperature = False
                 if not isTemperature:
+                    print 7
                     return 0
             else:
                 self.temperature = 72.0
@@ -316,6 +365,7 @@ class Fix(object):
                     else:
                         isPressure = False
                 if not isPressure:
+                    print 8
                     return 0
                 
             else:
@@ -330,6 +380,7 @@ class Fix(object):
                         self.horizon =='Natural' or 
                         self.horizon =='artificial' or 
                         self.horizon =='natural'):
+                    print 9
                     return 0
             else:
                 self.horizon = "Natural"
@@ -348,13 +399,13 @@ class Fix(object):
         return "0d0.0"
 #private
     def calculateAdjustedAltitude(self):
-        if self.horizon == "Natural":
+        if self.horizon == "natural" or self.horizon == "Natural":
             self.height = float(self.height)
             dip = (-0.97 * math.sqrt(self.height)) / 60
         else:
             dip = 0
             
-        refraction = (-0.00452 * float(self.pressure)) / (273 + self.FahrenheitToCelsius(self.temperature)) / math.atan(self.observation)
+        refraction = (-0.00452 * float(self.pressure)) / (273 + self.FahrenheitToCelsius(self.temperature)) / math.tan((math.pi * float(self.observation))/180.0)
         
         adjustedAltitude = self.observation + dip + refraction
         return adjustedAltitude

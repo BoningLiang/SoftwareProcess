@@ -1,0 +1,2 @@
+LOG: 2016-11-06 17:46:26 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/loge59383b2be6c.txt
+LOG: 2016-11-06 17:46:26 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_InvalidBody.xml

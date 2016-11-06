@@ -1,0 +1,2 @@
+LOG: 2016-11-06 17:45:35 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log134e7580d1e6.txt
+LOG: 2016-11-06 17:45:35 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_InvalidTemperature.xml
