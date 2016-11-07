@@ -6,6 +6,7 @@ class Angle(object):
     
     def setDegrees(self, degrees = 0.0):
         if isinstance(degrees, float) or isinstance(degrees, int):
+            degrees = round( degrees * 60.0, 1) / 60.0
             self.degrees = degrees % 360
             return float(self.degrees)
         else:
