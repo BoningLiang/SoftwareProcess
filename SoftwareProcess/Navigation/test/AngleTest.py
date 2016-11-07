@@ -118,17 +118,17 @@ class AngleTest(unittest.TestCase):
     def test300_030_ShouldReturnDegreesWithRounding(self):
         anAngle = Angle.Angle()
         anAngle.setDegrees(0 + 10.46/60.0)
-        self.assertAlmostEquals(10.46/60.0, anAngle.getDegrees(),places=4)  
+        self.assertAlmostEquals(10.5/60.0, anAngle.getDegrees(),places=4)
         
     def test300_040_ShouldReturnModuloDegreesWithRounding(self):         
         anAngle = Angle.Angle()
         anAngle.setDegrees(360 + 10.46/60.0)
-        self.assertAlmostEquals(10.46/60.0, anAngle.getDegrees(),places=4) 
+        self.assertAlmostEquals(10.5/60.0, anAngle.getDegrees(),places=4) 
         
     def test300_050_ShouldReturnModuloNegativeDegreesWithRounding(self):         
         anAngle = Angle.Angle()
         anAngle.setDegrees(-10.44/60.0)    #359d49.56 = 359d49.6 = 359.826667
-        self.assertAlmostEquals(359.826, anAngle.getDegrees(),places=4)
+        self.assertAlmostEquals(359.826667, anAngle.getDegrees(),places=4)  
            
     def test300_060_ShouldReturnModuloOfBoundaryCase(self):         
         anAngle = Angle.Angle()
@@ -176,7 +176,7 @@ class AngleTest(unittest.TestCase):
         anAngle = Angle.Angle()
         inputOutput = ["10d5.5", 10 + 5.5/60]
         self.assertAlmostEquals(anAngle.setDegreesAndMinutes(inputOutput[0]), inputOutput[1])    
-        self.assertAlmostEquals(inputOutput[1], anAngle.getDegrees())
+        self.assertAlmostEquals(inputOutput[1], anAngle.getDegrees())     
             
     def test400_030_ShouldSetAngleWithValidXDY(self):
         anAngle = Angle.Angle()

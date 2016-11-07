@@ -1,2 +1,2 @@
-LOG: 2016-11-06 17:57:53 Start of log
-LOG: 2016-11-06 17:57:53 Start of sighting file: CA02_300_InvalidHorizon.xml
+LOG: 2016-11-07 13:59:49 Start of log
+LOG: 2016-11-07 13:59:49 Start of sighting file: CA02_300_InvalidHorizon.xml
