@@ -1,2 +1,0 @@
-LOG: 2016-11-06 17:45:35 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log53b4243f3b96.txt
-LOG: 2016-11-06 17:45:35 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_InvalidObservation.xml
