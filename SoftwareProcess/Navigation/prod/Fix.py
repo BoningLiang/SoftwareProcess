@@ -4,7 +4,6 @@ import math
 import Angle
 import os
 import re
-from datetime import datetime
 
 class Fix(object):
 
@@ -21,6 +20,10 @@ class Fix(object):
         self.sightingFile = ""
         self.approximateLatitude = "0d0.0"
         self.approximateLongitude = "0d0.0"
+        
+        self.starFileString = "stars.txt"
+        self.ariesFileString = "aries.txt"
+        
         try:
             self.logFile = open(logFile,'r')
         except IOError:
@@ -53,6 +56,7 @@ class Fix(object):
             self.absoluteSightingFilePath = os.path.abspath(self.sightingFileString)
         else:
             raise ValueError('Fix.setSightingFile:')
+        
         if not os.path.realpath(self.absoluteSightingFilePath):
             raise ValueError('Fix.setSightingFile:')
         if ".xml" not in sightingFile:
@@ -64,10 +68,9 @@ class Fix(object):
         self.startOfSightingFile()
         try:
             open(sightingFile, 'r')
-            return sightingFile
         except:
             raise ValueError('Fix.setSightingFile:')
-            return sightingFile
+        return self.absoluteSightingFilePath
             
     def getSightings(self):
         if self.sightingFile == "":
@@ -82,51 +85,193 @@ class Fix(object):
         domTree.toprettyxml()
         sightingTree = domTree.documentElement
         sightings = sightingTree.getElementsByTagName("sighting")
-        
-        entryLists = []
+
         for sighting in sightings:
             resultHandle = self.handleDomTree(sighting)
             if resultHandle == 0:
-                raise ValueError('Fix.getSightings:')
+                self.sightingErrors+=1
+#                 raise ValueError('Fix.getSightings:')
             else:
                 if not self.body == "Unknown":
                     entryString = self.entryHeader()
-                    
                      
                     adjustedAltitude = self.calculateAdjustedAltitude()
                     
                     adjustedAltitudeAngle = Angle.Angle()
                     adjustedAltitudeAngle.setDegrees(adjustedAltitude)
                     adjustedAltitudeAngleStr = adjustedAltitudeAngle.getString()
-                    myDatetime = datetime.strptime(self.date+' '+self.time, "%Y-%m-%d %H:%M:%S")
-                    entryDic = {'body':self.body, 'datetime':myDatetime, 'adjustedAltitude': adjustedAltitudeAngleStr}
-                    entryLists.append(entryDic)                    
+                    
+                    entryString += self.body + "\t"
+                    entryString += self.date + "\t"
+                    entryString += self.time + "\t"            
+                    
+                    entryString += str(adjustedAltitudeAngleStr) + "\t"
+                    gha = self.getGHA()
+                    entryString += gha[0] + "\t" +gha[1] + "\t"
+                    
+                    self.logFile.write(entryString+"\n")
+                    self.logFile.flush()
+        
+                    entryString = ""
+                    
                 else:
                     self.sightingErrors+=1
-        
-        i = 0
-        j = 0
-        lenOfEntry = len(entryLists)
-        for i in range(lenOfEntry-1):
-            for j in range(lenOfEntry-1):
-                if entryLists[j]['datetime']>entryLists[j+1]['datetime']:
-                    tempList = entryLists[j]
-                    entryLists[j] = entryLists[j+1]
-                    entryLists[j+1] = tempList
-                j += 1
-            i += 1
-            
-        for entryDic in entryLists:
-            entryString = entryDic['body']+"\t" + str(entryDic['datetime']) +"\t"+entryDic['adjustedAltitude']
-            self.writeEntry(entryString)
-            
         self.EndOfLog()
         
         return (self.approximateLatitude, self.approximateLongitude)
+    
+    def setAriesFile(self, ariesFile = 0):
+        if ariesFile is 0:
+            raise ValueError('Fix.setAriesFile:')
+        
+        entryString = ""
+        self.ariesFileString = ariesFile
+        
+        if isinstance(ariesFile, int) or isinstance(ariesFile, float):
+            raise ValueError('Fix.setAriesFile:')
+        
+        
+        if ".txt" not in ariesFile:
+            raise ValueError('Fix.setAriesFile:')
+        ariesFileArray = ariesFile.split(".")
+        if ariesFileArray[0] == "":
+            raise ValueError('Fix.setAriesFile:')
+        
+        if(isinstance(ariesFile, str)):
+            if(os.path.exists(ariesFile)):
+                try:
+                    self.ariesFile = open(ariesFile)
+                except:
+                    raise ValueError("Fix.setAriesFile:")
+                self.ariesAbsoluteFilePath = os.path.abspath(ariesFile)
+                entryString = "Aries file:\t" + self.ariesAbsoluteFilePath
+                self.writeEntry(entryString)
+                self.ariesFile.close()
+                return self.ariesAbsoluteFilePath
+            else:
+                raise ValueError("Fix.setAriesFile:")
+                
+    
+    def setStarFile(self, starFile = 0):
+        if starFile == 0:
+            raise ValueError('Fix.setStarFile:')
+        
+        entryString = ""
+        self.starFileString = starFile
+        
+        if isinstance(starFile, int) or isinstance(starFile, float):
+            raise ValueError('Fix.setStarFile:')
+        
+        if ".txt" not in starFile:
+            raise ValueError('Fix.setStarFile:')
+        starFileArray = starFile.split(".")
+        if starFileArray[0] == "":
+            raise ValueError('Fix.setStarFile:')
+
+        
+        if(isinstance(starFile, str)):
+            if(os.path.exists(starFile)):
+                try:
+                    self.starFile = open(starFile)
+                except:
+                    raise ValueError("Fix.setStarFile:")
+                self.starAbsoluteFilePath = os.path.abspath(starFile)
+                entryString = "Star file:\t" + self.starAbsoluteFilePath
+                self.writeEntry(entryString)
+                self.starFile.close()
+                return self.starAbsoluteFilePath
+            else:
+                raise ValueError("Fix.setStarFile:")
+
+    def getGHA(self):
+        star = self.readStars()
+        if star is not None:
+            starSHAString = star['longitude']
+            geographicPositionLatitude = star['latitude']
+            starSHAangle = Angle.Angle()
+            starSHAangle.setDegreesAndMinutes(starSHAString)
+            starSHA = starSHAangle.getDegrees()
+            aries = self.readAries()
+            if aries == 0:
+                return ("0d0.0", "0d0.0")
+            if not aries is None:
+                aries1GHA = Angle.Angle()
+                aries2GHA = Angle.Angle()
+                aries1GHA.setDegreesAndMinutes(aries[0]['gha'])
+                aries2GHA.setDegreesAndMinutes(aries[1]['gha'])
+                
+                timeArray = self.time.split(":")
+                s = float(timeArray[1]) * 60 + float(timeArray[2])
+                
+                m = aries2GHA.subtract(aries1GHA)* (s / 3600)
+                
+                ariesGHA = aries1GHA.getDegrees() + m
+
+                observationGHA = ariesGHA + starSHA
+                observationGHAAngle = Angle.Angle()
+                observationGHAAngle.setDegrees(observationGHA)
+                geographicPositionLongitude = observationGHAAngle.getString()
+                return (geographicPositionLatitude, geographicPositionLongitude)
+            
+            
+        
+    def readAries(self):
+        self.ariesFile = open(self.ariesFileString)
+        ariesFileEntries = self.ariesFile.readlines()
+        ariesEntryDic1={}
+        tag = 0
+        for ariesFileEntry in ariesFileEntries:
+            ariesFileLineArray = ariesFileEntry.split()
+            date1 = time.strptime(self.date, "%Y-%m-%d")
+            time1Array = self.time.split(":")
+            time1 = int(time1Array[0])
+            date2 = time.strptime(ariesFileLineArray[0], "%m/%d/%y")
+            time2 = int(ariesFileLineArray[1])
+            
+            if tag == 1:
+                ariesEntryDic2 = {'date': ariesFileLineArray[0],
+                             'hour': ariesFileLineArray[1],
+                             'gha': ariesFileLineArray[2]}
+                return ariesEntryDic1, ariesEntryDic2
+            
+            if date1 == date2 and time1 == time2:
+                if tag == 0:
+                    ariesEntryDic1 = {'date': ariesFileLineArray[0],
+                                 'hour': ariesFileLineArray[1],
+                                 'gha': ariesFileLineArray[2]}
+                    tag = tag + 1
+            
+        if tag == 0:
+            return 0
+            
+            
+           
+    
+    def readStars(self):
+        if self.starFileString == "":
+            raise ValueError("Fix.readStars:")
+        else:
+            self.starFile = open(self.starFileString)
+            starFileEntries = self.starFile.readlines()
+            starEntryDic = {'body': '', 'date': '', 'longitude': '','latitude':'' }
+            loopTime = 0
+            for starFileEntry in starFileEntries:
+                starFileLineArray = starFileEntry.split()
+                if(starFileLineArray[0] == self.body):
+                    date1 = time.strptime(self.date, "%Y-%m-%d")
+                    date2 = time.strptime(starFileLineArray[1], "%m/%d/%y")
+                    if date1>date2 or loopTime == 0:
+                        starEntryDic = {'body': starFileLineArray[0], 
+                         'date': starFileLineArray[1],
+                         'longitude': starFileLineArray[2],
+                         'latitude': starFileLineArray[3]}
+                        loopTime += 1
+                    else:
+                        return starEntryDic
 
 #private
     def handleDomTree(self, sighting):
-        timeStr = "^(?P<hour>[0-2]?[0-3]):(?P<minute>[0-5]?[0-9]):(?P<second>[0-5]?[0-9])$"
+        timeStr = "^(?P<hour>[0-1]?[0-9]|[2][0-3]):(?P<minute>[0-5]?[0-9]):(?P<second>[0-5]?[0-9])$"
         dateStr = "^(?P<year>[0-9]{4})\-(?P<month>[0-3]?[0-9])\-(?P<day>[0-3]?[0-9])$"
         
         if len(sighting.getElementsByTagName("body")) is not 0:
@@ -246,12 +391,12 @@ class Fix(object):
         return "0d0.0"
 #private
     def calculateAdjustedAltitude(self):
-        if self.horizon == "Natural" or self.horizon == "natural":
+        if self.horizon == "natural" or self.horizon == "Natural":
             self.height = float(self.height)
             dip = (-0.97 * math.sqrt(self.height)) / 60
         else:
             dip = 0
-
+            
         refraction = (-0.00452 * float(self.pressure)) / (273 + self.FahrenheitToCelsius(self.temperature)) / math.tan((math.pi * float(self.observation))/180.0)
         
         adjustedAltitude = self.observation + dip + refraction
@@ -259,16 +404,17 @@ class Fix(object):
 
 #     private    
     def startOfLog(self):
-        self.logFile.write(self.entryHeader() + "Start of log" + "\n")
+#         self.logFile.write(self.entryHeader() + "Start of log" + "\n")
+        self.logFile.write(self.entryHeader() + "Log file:\t" + self.logAbsoluteFilePath + "\n")
         self.logFile.flush()
 
     def startOfSightingFile(self):
-        self.logFile.write(self.entryHeader() + "Start of sighting file: " +self.sightingFileString +"\n")
+        self.logFile.write(self.entryHeader() + "Sighting file:\t" +self.absoluteSightingFilePath +"\n")
         self.logFile.flush()
 
 #     private    
     def EndOfLog(self):
-        self.logFile.write(self.entryHeader() + "End of sighting file: " + self.sightingFileString +"\n")
+        self.logFile.write(self.entryHeader() + "Sighting errors:\t" + str(self.sightingErrors) +"\n")
         self.logFile.flush()
         self.logFile.close()
     
