@@ -32,12 +32,18 @@
 # print t[1]
 # print t[0] == ""
 
-import Fix as F
- 
-testFile = "CA02_300_ValidMultipleStarSighting.xml"
-theFix = F.Fix()
-theFix.setSightingFile(testFile)
-theFix.getSightings()
+# import Fix as F
+#   
+# testFile = "sightingFile.xml"
+# theFix = F.Fix()
+# theFix.setSightingFile(testFile)
+# theFix.getSightings()
+
+# import re
+# timeStr = "^(?P<hour>[0-2]?[0-9]):(?P<minute>[0-5]?[0-9]):(?P<second>[0-5]?[0-9])$"
+# time1="09:30:00"
+# isTime = re.search(timeStr, time1)
+# print isTime
 
 
 # testFile = "CA02_300_ValidWithMixedIndentation.xml"

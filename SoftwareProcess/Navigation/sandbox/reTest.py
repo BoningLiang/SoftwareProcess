@@ -1,6 +1,6 @@
 import re
 
-timeStr = "^(?P<hour>[0-2]?[0-3]):(?P<minute>[0-5]?[0-9]):(?P<second>[0-5]?[0-9])$"
+timeStr = "^(?P<hour>[0-1]?[0-9]|[2][0-3]):(?P<minute>[0-5]?[0-9]):(?P<second>[0-5]?[0-9])$"
 #date = "^(?P<month>[0-3]?[0-9])/(?P<day>[0-3]?[0-9])/(?P<year>[0-9]{4})$"
 dateStr = "^(?P<year>[0-9]{4})\-(?P<month>[0-3]?[0-9])\-(?P<day>[0-3]?[0-9])$"
 
@@ -11,7 +11,7 @@ if match:
     print "match"
 
 
-time1 = "11:00:00"
+time1 = "09:30:30"
 time2 = "23:59:59"
 time3 = "24:59:59"
   

@@ -27,3 +27,14 @@ LOG: 2016-11-02 14:58:25 Start of sighting file: CA02_300_ValidMultipleStarSight
 LOG: 2016-11-02 14:58:25 Sirius	2016-03-01 00:05:05	45d11.9
 LOG: 2016-11-02 14:58:25 Canopus	2016-03-02 23:40:01	15d1.5
 LOG: 2016-11-02 14:58:25 End of sighting file: CA02_300_ValidMultipleStarSighting.xml
+LOG: 2016-11-06 17:58:12 Start of log
+LOG: 2016-11-06 17:58:12 Start of sighting file: sightingFile.xml
+LOG: 2016-11-06 17:58:59 Start of log
+LOG: 2016-11-06 17:58:59 Start of sighting file: sightingFile.xml
+LOG: 2016-11-06 17:59:25 Start of log
+LOG: 2016-11-06 17:59:25 Start of sighting file: sightingFile.xml
+LOG: 2016-11-06 18:18:20 Start of log
+LOG: 2016-11-06 18:18:20 Start of sighting file: sightingFile.xml
+LOG: 2016-11-06 18:18:20 Pollux	2017-04-14 23:50:14	15d1.5
+LOG: 2016-11-06 18:18:20 Sirius	2017-04-17 09:30:30	45d11.9
+LOG: 2016-11-06 18:18:20 End of sighting file: sightingFile.xml
