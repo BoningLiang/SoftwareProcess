@@ -38,6 +38,8 @@ theFix = Fix.Fix()
        
 # testFile = "CA02_300_ValidWithMixedIndentation.xml"
 
+# testFile = "CA03_300_ValidStarLatLonInterpolationRequired.xml"
+
 testFile = "sightingFile.xml"
        
 theFix.setSightingFile(testFile)

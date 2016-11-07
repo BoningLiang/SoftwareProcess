@@ -1007,13 +1007,14 @@ class TestFix(unittest.TestCase):
         sightingCount = 0
         for logEntryNumber in range(0, len(logFileContents)):
             if(logFileContents[logEntryNumber].find(targetStringList[0]) > -1):
+                print logFileContents[logEntryNumber]
                 sightingCount += 1
                 for target in targetStringList:
                     if(target != None):
                         self.assertNotEquals(-1, logFileContents[logEntryNumber].find(target), 
                                          "Major:  Lat/Lon entry is not correct for getSightings " + self.RANDOM_LOG_FILE)
         self.assertEquals(1, sightingCount)
-        self.deleteNamedLogFlag = True  
+        self.deleteNamedLogFlag = True
         
         
 #---------- 

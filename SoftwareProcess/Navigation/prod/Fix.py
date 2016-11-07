@@ -89,7 +89,8 @@ class Fix(object):
         for sighting in sightings:
             resultHandle = self.handleDomTree(sighting)
             if resultHandle == 0:
-                raise ValueError('Fix.getSightings:')
+                self.sightingErrors+=1
+#                 raise ValueError('Fix.getSightings:')
             else:
                 if not self.body == "Unknown":
                     entryString = self.entryHeader()
@@ -270,17 +271,15 @@ class Fix(object):
 
 #private
     def handleDomTree(self, sighting):
-        timeStr = "^(?P<hour>[0-2]?[0-3]):(?P<minute>[0-5]?[0-9]):(?P<second>[0-5]?[0-9])$"
+        timeStr = "^(?P<hour>[0-1]?[0-9]|[2][0-3]):(?P<minute>[0-5]?[0-9]):(?P<second>[0-5]?[0-9])$"
         dateStr = "^(?P<year>[0-9]{4})\-(?P<month>[0-3]?[0-9])\-(?P<day>[0-3]?[0-9])$"
         
         if len(sighting.getElementsByTagName("body")) is not 0:
             if len(sighting.getElementsByTagName("body")[0].childNodes) is not 0:              
                 self.body = sighting.getElementsByTagName("body")[0].childNodes[0].data
             else:
-                print 1
                 return 0
         else:
-            print 2
             return 0
         
         self.date = sighting.getElementsByTagName("date")[0].childNodes[0].data
@@ -290,7 +289,6 @@ class Fix(object):
                 self.date = sighting.getElementsByTagName("date")[0].childNodes[0].data
                 isDate = re.search(dateStr, self.date)
                 if not isDate:
-                    print 3
                     return 0
         
         if len(sighting.getElementsByTagName("time")) is not 0:
@@ -298,7 +296,6 @@ class Fix(object):
                 self.time = sighting.getElementsByTagName("time")[0].childNodes[0].data
                 isTime = re.search(timeStr, self.time)
                 if not isTime:
-                    print 4
                     return 0
                 
         
@@ -307,7 +304,6 @@ class Fix(object):
         try:
             observationTestAngle.setDegreesAndMinutes(self.observation)
         except:
-            print 5
             return 0
         
         altitudeAngle = Angle.Angle()
@@ -323,7 +319,6 @@ class Fix(object):
                 else:
                     isFloat = True
                 if not isFloat:
-                    print 6
                     return 0
             else:
                 self.height = 0.0
@@ -343,7 +338,6 @@ class Fix(object):
                     else:
                         isTemperature = False
                 if not isTemperature:
-                    print 7
                     return 0
             else:
                 self.temperature = 72.0
@@ -365,7 +359,6 @@ class Fix(object):
                     else:
                         isPressure = False
                 if not isPressure:
-                    print 8
                     return 0
                 
             else:
@@ -380,7 +373,6 @@ class Fix(object):
                         self.horizon =='Natural' or 
                         self.horizon =='artificial' or 
                         self.horizon =='natural'):
-                    print 9
                     return 0
             else:
                 self.horizon = "Natural"
@@ -422,7 +414,7 @@ class Fix(object):
 
 #     private    
     def EndOfLog(self):
-        self.logFile.write(self.entryHeader() + "Sighting errors: " + str(self.sightingErrors) +"\n")
+        self.logFile.write(self.entryHeader() + "Sighting errors:\t" + str(self.sightingErrors) +"\n")
         self.logFile.flush()
         self.logFile.close()
     

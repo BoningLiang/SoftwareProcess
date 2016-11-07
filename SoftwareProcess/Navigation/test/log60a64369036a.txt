@@ -1,0 +1,2 @@
+LOG: 2016-11-06 18:25:43 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log60a64369036a.txt
+LOG: 2016-11-06 18:25:43 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_InvalidPressure.xml
