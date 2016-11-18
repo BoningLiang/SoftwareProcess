@@ -1,12 +1,12 @@
-<fix>
+<fix>	
 	<sighting>
-		<body></body>
-		<date>2017-03-01</date>
-		<time>23:40:01</time>
-		<observation>015d04.9</observation>
+		<body>Sabik</body>
+		<date>2017-01-01</date>
+		<time>03:00:00</time>
+		<observation>010d00.0</observation>
 		<height>6.0</height>
 		<temperature>72</temperature>
 		<pressure>1010</pressure>
 		<horizon>Artificial</horizon>
-	</sighting>
+	</sighting>		
 </fix>			

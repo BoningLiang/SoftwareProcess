@@ -10,6 +10,10 @@ class Fix(object):
     def __init__(self, logFile = 'log.txt'):
         functionName = "Fix.__init__: "
         self.starFileString = ""
+        
+        self.settedAriesFile = 0
+        self.settedStarsFile = 0
+        
         self.sightingErrors = 0
         if not isinstance(logFile, basestring):
             raise ValueError(functionName + "logFile must be a String!")
@@ -73,6 +77,10 @@ class Fix(object):
         return self.absoluteSightingFilePath
             
     def getSightings(self):
+        
+        if self.settedAriesFile == 0 or self.settedStarsFile == 0:
+            raise ValueError('Fix.getSightings:')
+        
         if self.sightingFile == "":
             raise ValueError('Fix.getSightings:')
         entryString = ""
@@ -147,9 +155,11 @@ class Fix(object):
                 entryString = "Aries file:\t" + self.ariesAbsoluteFilePath
                 self.writeEntry(entryString)
                 self.ariesFile.close()
+                self.settedAriesFile = 1
                 return self.ariesAbsoluteFilePath
             else:
                 raise ValueError("Fix.setAriesFile:")
+            
                 
     
     def setStarFile(self, starFile = 0):
@@ -179,6 +189,7 @@ class Fix(object):
                 entryString = "Star file:\t" + self.starAbsoluteFilePath
                 self.writeEntry(entryString)
                 self.starFile.close()
+                self.settedStarsFile = 1
                 return self.starAbsoluteFilePath
             else:
                 raise ValueError("Fix.setStarFile:")
