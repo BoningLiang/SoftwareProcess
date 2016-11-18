@@ -1,2 +1,0 @@
-LOG: 2016-11-06 18:27:09 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/logc81961bf0076.txt
-LOG: 2016-11-06 18:27:09 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_InvalidTime.xml

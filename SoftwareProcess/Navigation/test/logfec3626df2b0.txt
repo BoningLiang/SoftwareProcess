@@ -1,4 +1,0 @@
-LOG: 2016-11-06 18:23:01 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/logfec3626df2b0.txt
-LOG: 2016-11-06 18:23:01 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA03_300_ValidStarLatLonInterpolationRequired.xml
-LOG: 2016-11-06 18:23:01 Betelgeuse	2017-01-16	03:15:42	9d54.7	7d24.3	74d55.2	
-LOG: 2016-11-06 18:23:01 Sighting errors: 0

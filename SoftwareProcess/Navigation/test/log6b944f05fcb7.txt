@@ -1,2 +1,0 @@
-LOG: 2016-11-06 18:25:43 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log6b944f05fcb7.txt
-LOG: 2016-11-06 18:25:43 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_InvalidWithMissingMandatoryTags.xml
