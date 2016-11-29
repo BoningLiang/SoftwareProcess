@@ -1,6 +1,0 @@
-LOG: 2016-11-28 20:11:10 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log74be975f1afb.txt
-LOG: 2016-11-28 20:11:10 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_ValidOneStarSighting.xml
-LOG: 2016-11-28 20:11:10 Aries file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA03_Valid_Aries.txt
-LOG: 2016-11-28 20:11:10 Star file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA03_Valid_Stars.txt
-LOG: 2016-11-28 20:11:10 Aldebaran	2016-03-01	23:40:01	15d1.5	0d0.0	0d0.0	
-LOG: 2016-11-28 20:11:10 Sighting errors:	0
