@@ -14,6 +14,8 @@ class TestFix(unittest.TestCase):
         cls.ariesFileString = "Aries file:"
         cls.starFileString = "Star file:"
         cls.DEFAULT_LOG_FILE = "log.txt"
+        cls.ariesFileName = "CA03_Valid_Aries.txt"
+        cls.starFileName = "CA03_Valid_Stars.txt"
         cls.testToFileMap = [
             ["validStarSightingFile", "CA02_200_ValidStarSightingFile.xml"],
             ["validAriesFile", "CA03_Valid_Aries.txt"],           
@@ -592,11 +594,13 @@ class TestFix(unittest.TestCase):
 #            valid body with natural horizon -> should calculate altitude with dip
 #            valid body with artificial horizon -> should calculate altitude without dip
 #            valid body with default values -> should calculate altitude with height=0, temperature=72, pressure=1010, horizon-natural
+#            sighting file with invalid mandatory tag (one of each:  fix, body, date, time, observation)
+#            sighting file with invalid tag value (one of each:  date, time, observation, height, temperature, pressure, horizon)
 #    Sad tests:
 #        sightingFile:
 #            sighting file not previously set
-#            sighting file with invalid mandatory tag (one of each:  fix, body, date, time, observation)
-#            sighting file with invalid tag value (one of each:  date, time, observation, height, temperature, pressure, horizon)
+#            star file not previously set
+#            aries file not previously set
 #+++++++++++++++++++ Happy Path Tests ++++++++++++++++++++  
 #---------- 
     def test300_010_ShouldIgnoreMixedIndentation(self):
@@ -605,6 +609,8 @@ class TestFix(unittest.TestCase):
         expectedResult = ("0d0.0", "0d0.0")
         theFix = F.Fix()
         theFix.setSightingFile(testFile)
+        theFix.setStarFile(self.starFileName)
+        theFix.setAriesFile(self.ariesFileName)
         result = theFix.getSightings()
         self.assertTupleEqual(expectedResult, result, 
                               "Minor:  incorrect return value from getSightings")
@@ -615,6 +621,8 @@ class TestFix(unittest.TestCase):
         testFile = self.mapFileToTest("genericValidSightingFileWithMixedIndentation")
         theFix = F.Fix()
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)
+        theFix.setStarFile(self.starFileName)
         try:
             theFix.getSightings()
             self.assertTrue(True)
@@ -625,9 +633,11 @@ class TestFix(unittest.TestCase):
     def test300_030_ShouldLogOneSighting(self):
         'log one valid adjusted altitude'
         testFile = self.mapFileToTest("validOneStarSighting")
-        targetStringList = ["Aldebaran", "2016-03-01", "23:40:01"]
+        targetStringList = ["Aldebaran", "2017-03-01", "23:40:01"]
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -649,11 +659,13 @@ class TestFix(unittest.TestCase):
         'Log multiple stars that sorting'   
         testFile = self.mapFileToTest("validMultipleStarSighting") 
         targetStringList = [
-            ["Sirius", "2016-03-01", "00:05:05"],
-            ["Canopus", "2016-03-02", "23:40:01"]
+            ["Sirius", "2017-03-01", "00:05:05"],
+            ["Canopus", "2017-03-02", "23:40:01"]
             ]
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -675,12 +687,14 @@ class TestFix(unittest.TestCase):
         'Log multiple stars that require sorting using body name'        
         testFile = self.mapFileToTest("validMultipleStarSightingSameDateTime") 
         targetStringList = [
-            ["Acrux", "2016-03-01", "00:05:05"],
-            ["Sirius", "2016-03-01", "00:05:05"],
-            ["Canopus", "2016-03-02", "23:40:01"]
+            ["Acrux", "2017-03-01", "00:05:05"],
+            ["Sirius", "2017-03-01", "00:05:05"],
+            ["Canopus", "2017-03-02", "23:40:01"]
             ]
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -704,6 +718,8 @@ class TestFix(unittest.TestCase):
         
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -720,10 +736,12 @@ class TestFix(unittest.TestCase):
         'log information from recognized tags, ignore extraneous tags'   
         testFile = self.mapFileToTest("validWithExtraneousTags")   
         targetStringList = [
-            ["Sirius", "2016-03-01", "00:05:05"],
+            ["Sirius", "2017-03-01", "00:05:05"],
             ]
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -744,9 +762,11 @@ class TestFix(unittest.TestCase):
     def test300_080_ShouldLogStarWithNaturalHorizon(self):
         'log adjusted altitude for natural horizon'
         testFile = self.mapFileToTest("validOneStarNaturalHorizon")   
-        targetStringList = ["Hadar", "2016-03-01", "23:40:01", "29d55.7"]
+        targetStringList = ["Hadar", "2017-03-01", "23:40:01", "29d55.7"]
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -767,9 +787,11 @@ class TestFix(unittest.TestCase):
     def test300_080_ShouldLogStarWithArtificialHorizon(self):
         'log adjusted altitude for artificial horizon'
         testFile = self.mapFileToTest("validOneStarArtificialHorizon")
-        targetStringList = ["Hadar", "2016-03-01", "23:40:01", "29d59.9"]
+        targetStringList = ["Hadar", "2017-03-01", "23:40:01", "29d59.9"]
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -791,9 +813,11 @@ class TestFix(unittest.TestCase):
         'log adjusted altitude for star using default values'
         testFile = self.mapFileToTest("validOneStarWithDefaultValues")
 
-        targetStringList = ["Hadar", "2016-03-01", "23:40:01", "29d59.9"]
+        targetStringList = ["Hadar", "2017-03-01", "23:40:01", "29d59.9"]
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -817,6 +841,8 @@ class TestFix(unittest.TestCase):
         testFile = self.mapFileToTest("invalidWithMissingMandatoryTags")
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -834,6 +860,8 @@ class TestFix(unittest.TestCase):
         testFile = self.mapFileToTest("invalidBodyTag")
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -851,6 +879,8 @@ class TestFix(unittest.TestCase):
         testFile = self.mapFileToTest("invalidDateTag")
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -868,6 +898,8 @@ class TestFix(unittest.TestCase):
         testFile = self.mapFileToTest("invalidTimeTag")
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -885,6 +917,8 @@ class TestFix(unittest.TestCase):
         testFile = self.mapFileToTest("invalidObservationTag")
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -903,6 +937,8 @@ class TestFix(unittest.TestCase):
         testFile = self.mapFileToTest("invalidHeightTag")
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -921,6 +957,8 @@ class TestFix(unittest.TestCase):
         testFile = self.mapFileToTest("invalidTemperatureTag")
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setStarFile(self.starFileName)
+        theFix.setAriesFile(self.ariesFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -939,6 +977,8 @@ class TestFix(unittest.TestCase):
         testFile = self.mapFileToTest("invalidPressureTag")
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -956,6 +996,8 @@ class TestFix(unittest.TestCase):
         testFile = self.mapFileToTest("invalidHorizonTag")
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setStarFile(self.starFileName)
+        theFix.setAriesFile(self.ariesFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -972,6 +1014,8 @@ class TestFix(unittest.TestCase):
         targetStringList = ["Sabik", None, None, None, "-15d44.4", "247d23.7"]
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -997,6 +1041,8 @@ class TestFix(unittest.TestCase):
         targetStringList = ["Betelgeuse", None, None, None, "7d24.3", "75d54.3"]
         theFix = F.Fix(self.RANDOM_LOG_FILE)
         theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         theFix.getSightings()
         
         theLogFile = open(self.RANDOM_LOG_FILE, "r")
@@ -1020,11 +1066,38 @@ class TestFix(unittest.TestCase):
         'Raise exception on failure to set sighting file'
         expectedDiag = self.className + "getSightings:"
         theFix = F.Fix()
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
         with self.assertRaises(ValueError) as context:
             theFix.getSightings()
         self.assertEquals(expectedDiag, context.exception.args[0][0:len(expectedDiag)],
-                          "Major:  failure to set sighting file before getSightings()")   
-       
+                          "Major:  failure to set sighting file before getSightings()") 
+    
+    def test300_920_ShouldRaiseExceptionOnNotSettingStarFile(self):
+        'Raise exception on failure to set star file'
+        expectedDiag = self.className + "getSightings:"
+        testFile = self.mapFileToTest("validOneStarSighting")
+        theFix = F.Fix(self.RANDOM_LOG_FILE)
+        theFix = F.Fix()
+        theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        with self.assertRaises(ValueError) as context:
+            theFix.getSightings()
+        self.assertEquals(expectedDiag, context.exception.args[0][0:len(expectedDiag)],
+                          "Major:  failure to set star file before getSightings()")   
+
+    def test300_930_ShouldRaiseExceptionOnNotSettingAriesFile(self):
+        'Raise exception on failure to set aries file'
+        expectedDiag = self.className + "getSightings:"
+        testFile = self.mapFileToTest("validOneStarSighting")
+        theFix = F.Fix(self.RANDOM_LOG_FILE)
+        theFix = F.Fix()
+        theFix.setSightingFile(testFile)
+        theFix.setStarFile(self.ariesFileName)   
+        with self.assertRaises(ValueError) as context:
+            theFix.getSightings()
+        self.assertEquals(expectedDiag, context.exception.args[0][0:len(expectedDiag)],
+                          "Major:  failure to set aries file before getSightings()")     
 
 #  helper methods
     def indexInList(self, target, searchList):
