@@ -1,0 +1,7 @@
+LOG: 2016-11-30 18:30:24 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/loga7b88a9f01ed.txt
+LOG: 2016-11-30 18:30:24 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA03_300_ValidStarLatLonInterpolationRequired.xml
+LOG: 2016-11-30 18:30:24 Aries file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA03_Valid_Aries.txt
+LOG: 2016-11-30 18:30:24 Star file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA03_Valid_Stars.txt
+LOG: 2016-11-30 18:30:24 Betelgeuse	2017-01-16	03:15:42	9d54.7	7d24.3	74d55.2	0d0.0	0d0.0	82d20.0	302.0	
+LOG: 2016-11-30 18:30:24 Sighting errors:	0
+LOG: 2016-11-30 18:30:24 Approximate latitude:	N0d40.3	Approximate longitude:	4d59.3

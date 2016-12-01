@@ -1,0 +1,4 @@
+LOG: 2016-11-30 18:28:55 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log68924b6e4fea.txt
+LOG: 2016-11-30 18:28:55 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA02_300_InvalidTemperature.xml
+LOG: 2016-11-30 18:28:55 Star file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA03_Valid_Stars.txt
+LOG: 2016-11-30 18:28:55 Aries file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA03_Valid_Aries.txt

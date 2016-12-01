@@ -351,26 +351,34 @@ class Fix(object):
     def dealAssumedLatitude(self, assumedLatitude):
         
         if "-" in assumedLatitude:
+            print "Fix.dealAssumedLatitude() - 1"
             return 0
+        
+        if ("N" not in assumedLatitude) and ("S" not in assumedLatitude):
+            if assumedLatitude != "0d0.0":
+                print "Fix.dealAssumedLatitude() - 2"
+                return 0
         
         if "N" in assumedLatitude:
             assumedLatitude = assumedLatitude.replace("N","")
         if "S" in assumedLatitude:
             assumedLatitude = assumedLatitude.replace("S","-")
-        if "N" not in assumedLatitude and "S" not in assumedLatitude:
-            if assumedLatitude is not "0d0.0":
-                return 0
+        
         if "0d0.0" in assumedLatitude:
             if "N" in assumedLatitude or "S" in assumedLatitude:
+                print "Fix.dealAssumedLatitude() - 3"
                 return 0
         
         assumedLatitudeAngle = Angle.Angle()
         try:
             assumedLatitudeAngle.setDegreesAndMinutes(assumedLatitude)
         except:
+            print "Fix.dealAssumedLatitude() - 4"
             return 0
         assumedLatitudeArray = assumedLatitude.split("d")
-        if assumedLatitudeArray[0]>=90 or assumedLatitudeArray[0]<=-90:
+        print "assumedLatitudeArray[0] = "+assumedLatitudeArray[0]
+        if float(assumedLatitudeArray[0])>=90 or float(assumedLatitudeArray[0])<=-90:
+            print "Fix.dealAssumedLatitude() - 5"
             return 0
         
         return assumedLatitudeAngle
@@ -586,7 +594,7 @@ class Fix(object):
             dip = 0
             
 #         refraction = (-0.00452 * float(self.pressure)) / (273 + self.FahrenheitToCelsius(self.temperature)) / math.tan((math.pi * float(self.observation))/180.0)
-        refraction = (-0.00452 * float(self.pressure)) / (273 + self.FahrenheitToCelsius(self.temperature)) / math.tan(self.degreeToRadian(self.observation))
+        refraction = (-0.00452 * float(self.pressure)) / (273 + self.FahrenheitToCelsius(self.temperature)) / math.tan(math.radians(self.observation))
         adjustedAltitude = self.observation + dip + refraction
         return adjustedAltitude
 
@@ -611,9 +619,6 @@ class Fix(object):
     def entryHeader(self):
         entryHeader = "LOG: " + self.getDateTime() + " "
         return entryHeader
-    
-    def degreeToRadian(self, angle):
-        return (math.pi * float(angle))/180.0
     
     def writeEntry(self, entry):
         self.logFile.write(self.entryHeader() + entry +"\n")

@@ -208,4 +208,18 @@ LOG: 2016-11-30 17:48:29 Rigil Kent.	2017-03-24	23:41:56	35d8.1	-60d53.8	318d9.9
 LOG: 2016-11-30 17:48:29 Acrux	2017-03-24	23:42:06	48d33.9	-63d11.3	351d30.3	S53d38.4	74d35.3	132d48.3	434.0	
 LOG: 2016-11-30 17:48:29 Aldebaran	2017-03-24	23:43:12	13d42.3	16d32.3	109d27.8	S53d38.4	74d35.3	173d34.4	-3988.0	
 LOG: 2016-11-30 17:48:29 Sighting errors:	1
-LOG: 2016-11-30 17:48:29 Approximate latitude:	S13d28.0	Approximate longitude:	101d42.2
+LOG: 2016-11-30 17:48:29 Approximate latitude:	S13d28.0	Approximate longitude:	101d42.2LOG: 2016-11-30 18:45:24 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/prod/log.txt
+LOG: 2016-11-30 18:45:24 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/prod/log.txt
+LOG: 2016-11-30 18:45:55 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/prod/log.txt
+LOG: 2016-11-30 18:45:55 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/prod/sightingFileCA05.xml
+LOG: 2016-11-30 18:45:55 Star file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/prod/stars.txt
+LOG: 2016-11-30 18:45:55 Aries file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/prod/aries.txt
+LOG: 2016-11-30 18:45:55 Pollux	2017-04-17	23:50:14	15d1.5	27d59.1	87d30.8	N27d59.5	85d33.4	7d21.1	-2919.0	
+LOG: 2016-11-30 18:45:55 Sighting errors:	1
+LOG: 2016-11-30 18:45:55 Approximate latitude:	S20d15.5	Approximate longitude:	79d19.9LOG: 2016-11-30 18:45:55 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/prod/log.txt
+LOG: 2016-11-30 18:45:55 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/prod/sightingFileCA05.xml
+LOG: 2016-11-30 18:45:55 Star file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/prod/stars.txt
+LOG: 2016-11-30 18:45:55 Aries file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/prod/aries.txt
+LOG: 2016-11-30 18:45:55 Pollux	2017-04-17	23:50:14	15d1.5	27d59.1	87d30.8	N27d59.5	85d33.4	7d21.1	-2919.0	
+LOG: 2016-11-30 18:45:55 Sighting errors:	1
+LOG: 2016-11-30 18:45:55 Approximate latitude:	S20d15.5	Approximate longitude:	79d19.9
