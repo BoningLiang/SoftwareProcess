@@ -4,6 +4,7 @@ import math
 import Angle
 import os
 import re
+from __builtin__ import str
 
 class Fix(object):
 
@@ -24,6 +25,8 @@ class Fix(object):
         self.sightingFile = ""
         self.approximateLatitude = "0d0.0"
         self.approximateLongitude = "0d0.0"
+        self.returnApproximateLatitude = "0d0.0"
+        self.returnApproximateLongitude = "0d0.0"
         
         self.starFileString = "stars.txt"
         self.ariesFileString = "aries.txt"
@@ -76,7 +79,16 @@ class Fix(object):
             raise ValueError('Fix.setSightingFile:')
         return self.absoluteSightingFilePath
             
-    def getSightings(self):
+    def getSightings(self, assumedLatitude = "0d0.0", assumedLongitude = "0d0.0"):
+        
+#         assumedLatitudeDegree = self.dealAssumedLatitude(assumedLatitude)
+        assumedLatitudeAngle = self.dealAssumedLatitude(assumedLatitude)
+        assumedLongitudeAngle = self.dealAssumedLongitude(assumedLongitude)
+        if assumedLatitudeAngle == 0:
+            raise ValueError("Fix.getSightings:")
+        if assumedLongitudeAngle == 0:
+            raise ValueError("Fix.getSightings:")
+        
         
         if self.settedAriesFile == 0 or self.settedStarsFile == 0:
             raise ValueError('Fix.getSightings:')
@@ -93,7 +105,10 @@ class Fix(object):
         domTree.toprettyxml()
         sightingTree = domTree.documentElement
         sightings = sightingTree.getElementsByTagName("sighting")
-
+        
+        sumCosForEachSighting=0
+        sumSinForEachSighting=0
+        
         for sighting in sightings:
             resultHandle = self.handleDomTree(sighting)
             if resultHandle == 0:
@@ -108,6 +123,9 @@ class Fix(object):
                     adjustedAltitudeAngle = Angle.Angle()
                     adjustedAltitudeAngle.setDegrees(adjustedAltitude)
                     adjustedAltitudeAngleStr = adjustedAltitudeAngle.getString()
+                    adjustedAltitudeDegree = adjustedAltitudeAngle.getDegrees()
+                    
+#                     print "adjusted altitude: " + adjustedAltitudeAngleStr
                     
                     entryString += self.body + "\t"
                     entryString += self.date + "\t"
@@ -115,7 +133,80 @@ class Fix(object):
                     
                     entryString += str(adjustedAltitudeAngleStr) + "\t"
                     gha = self.getGHA()
+                    
+                    geographicPositionLatitudeAngle = Angle.Angle()
+                    geographicPositionLongitudeAngle = Angle.Angle()
+                    
+                    geographicPositionLatitudeAngle.setDegreesAndMinutes(gha[0])
+                    geographicPositionLongitudeAngle.setDegreesAndMinutes(gha[1])
+                    
+#                     print "geographic position altitude: " + gha[0]
+#                     print "geographic position longitude: " + gha[1]
+                    
+                    geographicPositionLatitudeDegree = geographicPositionLatitudeAngle.getDegrees()
+                    geographicPositionLongitudeDegree = geographicPositionLongitudeAngle.getDegrees()
+                    
                     entryString += gha[0] + "\t" +gha[1] + "\t"
+                    entryString += assumedLatitude + "\t" + assumedLongitude +"\t"
+                    #azimuth and distance
+                    #A Calculate local hour angle LHA
+                    LHAAngle = Angle.Angle()
+                    LHAAngle.setDegrees(geographicPositionLongitudeDegree)
+                    LHAAngle.add(assumedLongitudeAngle)
+                    LHA = LHAAngle.getDegrees()
+                    
+                    #B Calculate the angle by which to ....
+                    sinLat1 = math.sin(math.radians(geographicPositionLatitudeAngle.getDegrees()))
+                    print "sinLat1: "+str(sinLat1)
+                    sinLat2 = math.sin(math.radians(assumedLatitudeAngle.getDegrees()))
+                    print "sinLat2: "+str(sinLat2)
+                    sinLat = sinLat1 * sinLat2
+                    print "sinLat: "+str(sinLat)
+                    
+                    cosLat1 = math.cos(math.radians(geographicPositionLatitudeAngle.getDegrees()))
+                    print "cosLat1: "+str(cosLat1)
+                    cosLat2 = math.cos(math.radians(assumedLatitudeAngle.getDegrees()))
+                    print "cosLat2: "+str(cosLat2)
+                    cosLHA = math.cos(math.radians(LHA))
+                    print "cosLHA: "+str(cosLHA)
+                    cosLat = cosLat1 * cosLat2 * cosLHA
+                    print "cosLat: "+str(cosLat)
+                    intermediateDistance = sinLat + cosLat
+                    print "intermediateDistance: "+ str(intermediateDistance)
+                    correctedAltitude = math.asin(intermediateDistance)
+                    print "correctedAltitude: " +str(correctedAltitude) 
+                    
+                    #C
+                    distanceAdjustmentFloat = 60*(math.degrees(correctedAltitude) - adjustedAltitudeDegree)
+                    distanceAdjustmentInteger = round(distanceAdjustmentFloat)
+                    print "distance adjustment (before round): "+str(distanceAdjustmentFloat), "*"*30 , "distance"
+                    print "distance adjustment: "+str(distanceAdjustmentInteger), "*"*30 , "distance"
+                    
+                    #D
+                    print "D: =================================="
+                    theNumerator = sinLat1 - sinLat2 * intermediateDistance
+                    print "numerator: "+str(theNumerator)
+                    cosLat1 = math.cos(math.radians(assumedLatitudeAngle.getDegrees()))
+                    print "cosLat1: "+str(cosLat1)
+                    cosLat2 = math.cos(correctedAltitude)
+                    print "cosLat2: "+str(cosLat2)
+                    theDenominator = cosLat1 * cosLat2
+                    print "denominator: "+str(theDenominator)
+                    intermediaAzimuth = theNumerator / theDenominator
+                    print "intermedia azimuth: "+str(intermediaAzimuth)
+                    azimuthAdjustment = math.acos(intermediaAzimuth)
+                    print "azimuth adjustment(rad): "+str(azimuthAdjustment)
+                    azimuthAdjustmentAngle = Angle.Angle()
+                    
+                    azimuthAdjustmentAngle.setDegrees(math.degrees(azimuthAdjustment))
+                    
+                    print "azimuth adjustment: "+azimuthAdjustmentAngle.getString(), "*"*30 , "azimuth"
+                    entryString += azimuthAdjustmentAngle.getString() + "\t" + str(distanceAdjustmentInteger) +"\t"               
+                    
+                    
+                    sumCosForEachSighting += distanceAdjustmentInteger * math.cos(math.radians(azimuthAdjustmentAngle.getDegrees()))
+                    
+                    sumSinForEachSighting += distanceAdjustmentInteger * math.sin(math.radians(azimuthAdjustmentAngle.getDegrees()))
                     
                     self.logFile.write(entryString+"\n")
                     self.logFile.flush()
@@ -124,9 +215,35 @@ class Fix(object):
                     
                 else:
                     self.sightingErrors+=1
-        self.EndOfLog()
         
-        return (self.approximateLatitude, self.approximateLongitude)
+        print "\n"
+        print "distance adjustment * cos(azimuth adjustment) = "+ str(sumCosForEachSighting)
+        print "distance adjustment * sin(azimuth adjustment) = "+ str(sumSinForEachSighting)
+            
+        self.approximateLatitude = assumedLatitudeAngle.getDegrees() + sumCosForEachSighting / 60
+        print "assumedLatitudeAngle.getDegrees() = "+str(assumedLatitudeAngle.getDegrees())
+        print "sumCosForEachSighting / 60 = "+str(sumCosForEachSighting / 60)
+        
+        if self.approximateLatitude>=270 and self.approximateLatitude<=360:
+            self.approximateLatitude = self.approximateLatitude - 360
+        
+        if self.approximateLatitude>90 and self.approximateLatitude<270:
+            self.approximateLatitude = 180 - self.approximateLatitude
+        
+        self.approximateLongitude = assumedLongitudeAngle.getDegrees() + sumSinForEachSighting / 60
+        
+        approximateLatitudeString = str(int(self.approximateLatitude))+"d"+ str(abs(round((self.approximateLatitude-int(self.approximateLatitude))*60,1)))
+        if self.approximateLatitude<0:
+            approximateLatitudeString = approximateLatitudeString.replace("-","S")
+        else:
+            approximateLatitudeString = "N" + approximateLatitudeString
+        
+        approximateLongitudeAngle = Angle.Angle()
+        approximateLongitudeAngle.setDegrees(self.approximateLongitude)
+        self.returnApproximateLatitude = approximateLatitudeString
+        self.returnApproximateLongitude = approximateLongitudeAngle.getString()
+        self.EndOfLog()
+        return (self.returnApproximateLatitude, self.returnApproximateLongitude)
     
     def setAriesFile(self, ariesFile = 0):
         if ariesFile is 0:
@@ -196,6 +313,7 @@ class Fix(object):
 
     def getGHA(self):
         star = self.readStars()
+#         print "star: "+star
         if star is not None:
             starSHAString = star['longitude']
             geographicPositionLatitude = star['latitude']
@@ -204,13 +322,15 @@ class Fix(object):
             starSHA = starSHAangle.getDegrees()
             aries = self.readAries()
             if aries == 0:
+                print "Fix.getGHA()-1"
                 return ("0d0.0", "0d0.0")
             if not aries is None:
                 aries1GHA = Angle.Angle()
+                
                 aries2GHA = Angle.Angle()
                 aries1GHA.setDegreesAndMinutes(aries[0]['gha'])
                 aries2GHA.setDegreesAndMinutes(aries[1]['gha'])
-                
+                print "aries1GHA: "+aries1GHA.getString()
                 timeArray = self.time.split(":")
                 s = float(timeArray[1]) * 60 + float(timeArray[2])
                 
@@ -219,11 +339,51 @@ class Fix(object):
                 ariesGHA = aries1GHA.getDegrees() + m
 
                 observationGHA = ariesGHA + starSHA
+                print "ariesGHA: "+str(ariesGHA)
+                print "starSHA: "+str(starSHA)
                 observationGHAAngle = Angle.Angle()
                 observationGHAAngle.setDegrees(observationGHA)
                 geographicPositionLongitude = observationGHAAngle.getString()
                 return (geographicPositionLatitude, geographicPositionLongitude)
-            
+        print "Fix.getGHA()-error"
+         
+   
+    def dealAssumedLatitude(self, assumedLatitude):
+        
+        if "-" in assumedLatitude:
+            return 0
+        
+        if "N" in assumedLatitude:
+            assumedLatitude = assumedLatitude.replace("N","")
+        if "S" in assumedLatitude:
+            assumedLatitude = assumedLatitude.replace("S","-")
+        if "N" not in assumedLatitude and "S" not in assumedLatitude:
+            if assumedLatitude is not "0d0.0":
+                return 0
+        if "0d0.0" in assumedLatitude:
+            if "N" in assumedLatitude or "S" in assumedLatitude:
+                return 0
+        
+        assumedLatitudeAngle = Angle.Angle()
+        try:
+            assumedLatitudeAngle.setDegreesAndMinutes(assumedLatitude)
+        except:
+            return 0
+        assumedLatitudeArray = assumedLatitude.split("d")
+        if assumedLatitudeArray[0]>=90 or assumedLatitudeArray[0]<=-90:
+            return 0
+        
+        return assumedLatitudeAngle
+    
+    def dealAssumedLongitude(self, assumedLongitude):
+        
+        assumedLongitudeAngle = Angle.Angle()
+        try:
+            assumedLongitudeAngle.setDegreesAndMinutes(assumedLongitude)
+        except:
+            return 0
+        
+        return assumedLongitudeAngle
             
         
     def readAries(self):
@@ -268,6 +428,17 @@ class Fix(object):
             loopTime = 0
             for starFileEntry in starFileEntries:
                 starFileLineArray = starFileEntry.split()
+                
+                if len(starFileLineArray)>4:
+                    for i in range(1,len(starFileLineArray)-3):
+                        starFileLineArray[0] = starFileLineArray[0] +" "+ starFileLineArray[i]
+#                         print "starFileArray[0] = " + starFileLineArray[0]
+                    for i in range(len(starFileLineArray)-4, len(starFileLineArray)-1):
+                        starFileLineArray[i] = starFileLineArray[i+1]
+                
+                starFileLineArray[0] = starFileLineArray[0].strip()
+                
+                
                 if(starFileLineArray[0] == self.body):
                     date1 = time.strptime(self.date, "%Y-%m-%d")
                     date2 = time.strptime(starFileLineArray[1], "%m/%d/%y")
@@ -279,6 +450,7 @@ class Fix(object):
                         loopTime += 1
                     else:
                         return starEntryDic
+            print "Fix.readStars() - error"
 
 #private
     def handleDomTree(self, sighting):
@@ -400,6 +572,11 @@ class Fix(object):
 # private
     def adjustedAltitude(self, altitude = 0):
         return "0d0.0"
+    
+    
+    
+    
+    
 #private
     def calculateAdjustedAltitude(self):
         if self.horizon == "natural" or self.horizon == "Natural":
@@ -408,8 +585,8 @@ class Fix(object):
         else:
             dip = 0
             
-        refraction = (-0.00452 * float(self.pressure)) / (273 + self.FahrenheitToCelsius(self.temperature)) / math.tan((math.pi * float(self.observation))/180.0)
-        
+#         refraction = (-0.00452 * float(self.pressure)) / (273 + self.FahrenheitToCelsius(self.temperature)) / math.tan((math.pi * float(self.observation))/180.0)
+        refraction = (-0.00452 * float(self.pressure)) / (273 + self.FahrenheitToCelsius(self.temperature)) / math.tan(self.degreeToRadian(self.observation))
         adjustedAltitude = self.observation + dip + refraction
         return adjustedAltitude
 
@@ -426,6 +603,7 @@ class Fix(object):
 #     private    
     def EndOfLog(self):
         self.logFile.write(self.entryHeader() + "Sighting errors:\t" + str(self.sightingErrors) +"\n")
+        self.logFile.write(self.entryHeader()+"Approximate latitude:\t"+str(self.returnApproximateLatitude)+"\tApproximate longitude:\t"+str(self.returnApproximateLongitude))
         self.logFile.flush()
         self.logFile.close()
     
@@ -433,6 +611,9 @@ class Fix(object):
     def entryHeader(self):
         entryHeader = "LOG: " + self.getDateTime() + " "
         return entryHeader
+    
+    def degreeToRadian(self, angle):
+        return (math.pi * float(angle))/180.0
     
     def writeEntry(self, entry):
         self.logFile.write(self.entryHeader() + entry +"\n")

@@ -68,6 +68,7 @@ class Angle(object):
                         else:
                             raise ValueError('Angle.setDegreesAndMinutes:')
                     else:
+                        print portions[0]
                         raise ValueError('Angle.setDegreesAndMinutes:')
             else:
                 raise ValueError('Angle.setDegreesAndMinutes:')

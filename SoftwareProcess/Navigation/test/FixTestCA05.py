@@ -603,464 +603,466 @@ class TestFix(unittest.TestCase):
 #            aries file not previously set
 #+++++++++++++++++++ Happy Path Tests ++++++++++++++++++++  
 #---------- 
-    def test300_010_ShouldIgnoreMixedIndentation(self):
-        'parse sighting file that valid tags'
-        testFile = self.mapFileToTest("genericValidStarSightingFile")
-        expectedResult = ("0d0.0", "0d0.0")
-        theFix = F.Fix()
-        theFix.setSightingFile(testFile)
-        theFix.setStarFile(self.starFileName)
-        theFix.setAriesFile(self.ariesFileName)
-        result = theFix.getSightings()
-        self.assertTupleEqual(expectedResult, result, 
-                              "Minor:  incorrect return value from getSightings")
+#     def test300_010_ShouldIgnoreMixedIndentation(self):
+#         'parse sighting file that valid tags'
+#         testFile = self.mapFileToTest("genericValidStarSightingFile")
+#         expectedResult = ("0d0.0", "0d0.0")
+#         theFix = F.Fix()
+#         theFix.setSightingFile(testFile)
+#         theFix.setStarFile(self.starFileName)
+#         theFix.setAriesFile(self.ariesFileName)
+#         result = theFix.getSightings()
+#         self.assertTupleEqual(expectedResult, result, 
+#                               "Minor:  incorrect return value from getSightings")
         
 #---------- 
-    def test300_020_ShouldIgnoreMixedIndentation(self):
-        'parse sighting file that has mixed indentation'
-        testFile = self.mapFileToTest("genericValidSightingFileWithMixedIndentation")
-        theFix = F.Fix()
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)
-        theFix.setStarFile(self.starFileName)
-        try:
-            theFix.getSightings()
-            self.assertTrue(True)
-        except:
-            self.fail("Major: getSightings failed on valid file with mixed indentation")
+#     def test300_020_ShouldIgnoreMixedIndentation(self):
+#         'parse sighting file that has mixed indentation'
+#         testFile = self.mapFileToTest("genericValidSightingFileWithMixedIndentation")
+#         theFix = F.Fix()
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)
+#         theFix.setStarFile(self.starFileName)
+#         try:
+#             theFix.getSightings()
+#             self.assertTrue(True)
+#         except:
+#             self.fail("Major: getSightings failed on valid file with mixed indentation")
             
 #---------- 
-    def test300_030_ShouldLogOneSighting(self):
-        'log one valid adjusted altitude'
-        testFile = self.mapFileToTest("validOneStarSighting")
-        targetStringList = ["Aldebaran", "2017-03-01", "23:40:01"]
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)   
-        theFix.setStarFile(self.starFileName)
-        theFix.getSightings()
-        
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        sightingCount = 0
-        for logEntryNumber in range(0, len(logFileContents)):
-            if(logFileContents[logEntryNumber].find(targetStringList[0]) > -1):
-                sightingCount += 1
-                for target in targetStringList:
-                    self.assertNotEquals(-1, logFileContents[logEntryNumber].find(target), 
-                                         "Major:  Log entry is not correct for getSightings " + self.RANDOM_LOG_FILE)
-        self.assertEquals(1, sightingCount)
-        self.deleteNamedLogFlag = True  
+#     def test300_030_ShouldLogOneSighting(self):
+#         'log one valid adjusted altitude'
+#         testFile = self.mapFileToTest("validOneStarSighting")
+#         targetStringList = ["Aldebaran", "2017-03-01", "23:40:01"]
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)   
+#         theFix.setStarFile(self.starFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         sightingCount = 0
+#         for logEntryNumber in range(0, len(logFileContents)):
+#             if(logFileContents[logEntryNumber].find(targetStringList[0]) > -1):
+#                 sightingCount += 1
+#                 for target in targetStringList:
+#                     self.assertNotEquals(-1, logFileContents[logEntryNumber].find(target), 
+#                                          "Major:  Log entry is not correct for getSightings " + self.RANDOM_LOG_FILE)
+#         self.assertEquals(1, sightingCount)
+#         self.deleteNamedLogFlag = True  
         
 #---------- 
-    def test300_040_ShouldLogMultipleSightingsInTimeOrder(self): 
-        'Log multiple stars that sorting'   
-        testFile = self.mapFileToTest("validMultipleStarSighting") 
-        targetStringList = [
-            ["Sirius", "2017-03-01", "00:05:05"],
-            ["Canopus", "2017-03-02", "23:40:01"]
-            ]
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)   
-        theFix.setStarFile(self.starFileName)
-        theFix.getSightings()
-        
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        # find entry with first star
-        entryIndex = self.indexInList(targetStringList[0][0], logFileContents)
-        self.assertLess(-1, entryIndex, 
-                           "Major: failure to find " + targetStringList[0][0] +  " in log " + self.RANDOM_LOG_FILE)
-        for index in range(entryIndex+1, len(targetStringList)):
-            entryIndex += 1
-            if(not(targetStringList[index][0] in logFileContents[entryIndex])):
-                self.fail("Major: failure to find star in log " + self.RANDOM_LOG_FILE)
-        self.deleteNamedLogFlag = True  
+#     def test300_040_ShouldLogMultipleSightingsInTimeOrder(self): 
+#         'Log multiple stars that sorting'   
+#         testFile = self.mapFileToTest("validMultipleStarSighting") 
+#         targetStringList = [
+#             ["Sirius", "2017-03-01", "00:05:05"],
+#             ["Canopus", "2017-03-02", "23:40:01"]
+#             ]
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)   
+#         theFix.setStarFile(self.starFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         # find entry with first star
+#         entryIndex = self.indexInList(targetStringList[0][0], logFileContents)
+#         self.assertLess(-1, entryIndex, 
+#                            "Major: failure to find " + targetStringList[0][0] +  " in log " + self.RANDOM_LOG_FILE)
+#         for index in range(entryIndex+1, len(targetStringList)):
+#             entryIndex += 1
+#             if(not(targetStringList[index][0] in logFileContents[entryIndex])):
+#                 self.fail("Major: failure to find star in log " + self.RANDOM_LOG_FILE)
+#         self.deleteNamedLogFlag = True  
 
 #---------- 
-    def test300_050_ShouldLogMultipleSightingsWithSameDateTime(self): 
-        'Log multiple stars that require sorting using body name'        
-        testFile = self.mapFileToTest("validMultipleStarSightingSameDateTime") 
-        targetStringList = [
-            ["Acrux", "2017-03-01", "00:05:05"],
-            ["Sirius", "2017-03-01", "00:05:05"],
-            ["Canopus", "2017-03-02", "23:40:01"]
-            ]
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)   
-        theFix.setStarFile(self.starFileName)
-        theFix.getSightings()
-        
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        # find entry with first star
-        entryIndex = self.indexInList(targetStringList[0][0], logFileContents)
-        self.assertLess(-1, entryIndex, 
-                           "Major: failure to find " + targetStringList[0][0] +  " in log " + self.RANDOM_LOG_FILE)
-        for index in range(entryIndex+1, len(targetStringList)):
-            entryIndex += 1
-            if(not(targetStringList[index][0] in logFileContents[entryIndex])):
-                self.fail("Major: failure to find star in log " + self.RANDOM_LOG_FILE)
-        self.deleteNamedLogFlag = True   
+#     def test300_050_ShouldLogMultipleSightingsWithSameDateTime(self): 
+#         'Log multiple stars that require sorting using body name'        
+#         testFile = self.mapFileToTest("validMultipleStarSightingSameDateTime") 
+#         targetStringList = [
+#             ["Acrux", "2017-03-01", "00:05:05"],
+#             ["Sirius", "2017-03-01", "00:05:05"],
+#             ["Canopus", "2017-03-02", "23:40:01"]
+#             ]
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)   
+#         theFix.setStarFile(self.starFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         # find entry with first star
+#         entryIndex = self.indexInList(targetStringList[0][0], logFileContents)
+#         self.assertLess(-1, entryIndex, 
+#                            "Major: failure to find " + targetStringList[0][0] +  " in log " + self.RANDOM_LOG_FILE)
+#         for index in range(entryIndex+1, len(targetStringList)):
+#             entryIndex += 1
+#             if(not(targetStringList[index][0] in logFileContents[entryIndex])):
+#                 self.fail("Major: failure to find star in log " + self.RANDOM_LOG_FILE)
+#         self.deleteNamedLogFlag = True   
 
 #---------- 
-    def test300_060_ShouldHandleNoSightings(self):
-        'ensure empty fix is handled without logging anything'       
-        testFile = self.mapFileToTest("validWithNoSightings")
-        
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)   
-        theFix.setStarFile(self.starFileName)
-        theFix.getSightings()
-        
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        endOfSightingFileIndex = self.indexInList(self.starSightingString, logFileContents)
-        self.assertLess(-1,endOfSightingFileIndex,
-                           "Major: log file does not contain 'end of sighting file' entry " + self.RANDOM_LOG_FILE)
-        self.deleteNamedLogFlag = True   
+#     def test300_060_ShouldHandleNoSightings(self):
+#         'ensure empty fix is handled without logging anything'       
+#         testFile = self.mapFileToTest("validWithNoSightings")
+#         
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)   
+#         theFix.setStarFile(self.starFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         endOfSightingFileIndex = self.indexInList(self.starSightingString, logFileContents)
+#         self.assertLess(-1,endOfSightingFileIndex,
+#                            "Major: log file does not contain 'end of sighting file' entry " + self.RANDOM_LOG_FILE)
+#         self.deleteNamedLogFlag = True   
         
 #---------- 
-    def test300_070_ShouldIgnoreExtraneousTags(self): 
-        'log information from recognized tags, ignore extraneous tags'   
-        testFile = self.mapFileToTest("validWithExtraneousTags")   
-        targetStringList = [
-            ["Sirius", "2017-03-01", "00:05:05"],
-            ]
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)   
-        theFix.setStarFile(self.starFileName)
-        theFix.getSightings()
-        
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        # find entry with first star
-        entryIndex = self.indexInList(targetStringList[0][0], logFileContents)
-        self.assertLess(-1, entryIndex, 
-                           "Major: failure to find " + targetStringList[0][0] +  " in log " + self.RANDOM_LOG_FILE)
-        for index in range(entryIndex+1, len(targetStringList)):
-            entryIndex += 1
-            if(not(targetStringList[index][0] in logFileContents[entryIndex])):
-                self.fail("Major: failure to find star in log " + self.RANDOM_LOG_FILE)
-        self.deleteNamedLogFlag = True    
+#     def test300_070_ShouldIgnoreExtraneousTags(self): 
+#         'log information from recognized tags, ignore extraneous tags'   
+#         testFile = self.mapFileToTest("validWithExtraneousTags")   
+#         targetStringList = [
+#             ["Sirius", "2017-03-01", "00:05:05"],
+#             ]
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)   
+#         theFix.setStarFile(self.starFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         # find entry with first star
+#         entryIndex = self.indexInList(targetStringList[0][0], logFileContents)
+#         self.assertLess(-1, entryIndex, 
+#                            "Major: failure to find " + targetStringList[0][0] +  " in log " + self.RANDOM_LOG_FILE)
+#         for index in range(entryIndex+1, len(targetStringList)):
+#             entryIndex += 1
+#             if(not(targetStringList[index][0] in logFileContents[entryIndex])):
+#                 self.fail("Major: failure to find star in log " + self.RANDOM_LOG_FILE)
+#         self.deleteNamedLogFlag = True    
 
 #---------- 
-    def test300_080_ShouldLogStarWithNaturalHorizon(self):
-        'log adjusted altitude for natural horizon'
-        testFile = self.mapFileToTest("validOneStarNaturalHorizon")   
-        targetStringList = ["Hadar", "2017-03-01", "23:40:01", "29d55.7"]
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)   
-        theFix.setStarFile(self.starFileName)
-        theFix.getSightings()
-        
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        sightingCount = 0
-        for logEntryNumber in range(0, len(logFileContents)):
-            if(logFileContents[logEntryNumber].find(targetStringList[0]) > -1):
-                sightingCount += 1
-                for target in targetStringList:
-                    self.assertNotEquals(-1, logFileContents[logEntryNumber].find(target), 
-                                         "Major:  Log entry is not correct for getSightings " + self.RANDOM_LOG_FILE)
-        self.assertEquals(1, sightingCount)
-        self.deleteNamedLogFlag = True  
+#     def test300_080_ShouldLogStarWithNaturalHorizon(self):
+#         'log adjusted altitude for natural horizon'
+#         testFile = self.mapFileToTest("validOneStarNaturalHorizon")   
+#         targetStringList = ["Hadar", "2017-03-01", "23:40:01", "29d55.7"]
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)   
+#         theFix.setStarFile(self.starFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         sightingCount = 0
+#         for logEntryNumber in range(0, len(logFileContents)):
+#             if(logFileContents[logEntryNumber].find(targetStringList[0]) > -1):
+#                 sightingCount += 1
+#                 for target in targetStringList:
+#                     self.assertNotEquals(-1, logFileContents[logEntryNumber].find(target), 
+#                                          "Major:  Log entry is not correct for getSightings " + self.RANDOM_LOG_FILE)
+#         self.assertEquals(1, sightingCount)
+#         self.deleteNamedLogFlag = True  
 
 #---------- 
-    def test300_080_ShouldLogStarWithArtificialHorizon(self):
-        'log adjusted altitude for artificial horizon'
-        testFile = self.mapFileToTest("validOneStarArtificialHorizon")
-        targetStringList = ["Hadar", "2017-03-01", "23:40:01", "29d59.9"]
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)   
-        theFix.setStarFile(self.starFileName)
-        theFix.getSightings()
-        
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        sightingCount = 0
-        for logEntryNumber in range(0, len(logFileContents)):
-            if(logFileContents[logEntryNumber].find(targetStringList[0]) > -1):
-                sightingCount += 1
-                for target in targetStringList:
-                    self.assertNotEquals(-1, logFileContents[logEntryNumber].find(target), 
-                                         "Major:  Log entry is not correct for getSightings " + self.RANDOM_LOG_FILE)
-        self.assertEquals(1, sightingCount)
-        self.deleteNamedLogFlag = True  
+#     def test300_080_ShouldLogStarWithArtificialHorizon(self):
+#         'log adjusted altitude for artificial horizon'
+#         testFile = self.mapFileToTest("validOneStarArtificialHorizon")
+#         targetStringList = ["Hadar", "2017-03-01", "23:40:01", "29d59.9"]
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)   
+#         theFix.setStarFile(self.starFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         sightingCount = 0
+#         for logEntryNumber in range(0, len(logFileContents)):
+#             if(logFileContents[logEntryNumber].find(targetStringList[0]) > -1):
+#                 sightingCount += 1
+#                 for target in targetStringList:
+#                     self.assertNotEquals(-1, logFileContents[logEntryNumber].find(target), 
+#                                          "Major:  Log entry is not correct for getSightings " + self.RANDOM_LOG_FILE)
+#         self.assertEquals(1, sightingCount)
+#         self.deleteNamedLogFlag = True  
         
 #----------         
-    def test300_090_ShouldLogStarWithDefaultSightingValues(self):
-        'log adjusted altitude for star using default values'
-        testFile = self.mapFileToTest("validOneStarWithDefaultValues")
-
-        targetStringList = ["Hadar", "2017-03-01", "23:40:01", "29d59.9"]
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)   
-        theFix.setStarFile(self.starFileName)
-        theFix.getSightings()
-        
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        sightingCount = 0
-        for logEntryNumber in range(0, len(logFileContents)):
-            if(logFileContents[logEntryNumber].find(targetStringList[0]) > -1):
-                sightingCount += 1
-                for target in targetStringList:
-                    self.assertNotEquals(-1, logFileContents[logEntryNumber].find(target), 
-                                         "Major:  Log entry is not correct for getSightings")
-        self.assertEquals(1, sightingCount)
-        self.deleteNamedLogFlag = True
+#     def test300_090_ShouldLogStarWithDefaultSightingValues(self):
+#         'log adjusted altitude for star using default values'
+#         testFile = self.mapFileToTest("validOneStarWithDefaultValues")
+# 
+#         targetStringList = ["Hadar", "2017-03-01", "23:40:01", "29d59.9"]
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)   
+#         theFix.setStarFile(self.starFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         sightingCount = 0
+#         for logEntryNumber in range(0, len(logFileContents)):
+#             if(logFileContents[logEntryNumber].find(targetStringList[0]) > -1):
+#                 sightingCount += 1
+#                 for target in targetStringList:
+#                     self.assertNotEquals(-1, logFileContents[logEntryNumber].find(target), 
+#                                          "Major:  Log entry is not correct for getSightings")
+#         self.assertEquals(1, sightingCount)
+#         self.deleteNamedLogFlag = True
  
 #-----------        
-    def test300_091_ShouldLogErrorOnMissingMandatoryTag(self):
-        'Verify that missing mandatory tag was flagged as sighting error'
-        targetString = "Sighting errors:\t1"
-        testFile = self.mapFileToTest("invalidWithMissingMandatoryTags")
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)   
-        theFix.setStarFile(self.starFileName)
-        theFix.getSightings()
-        
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
-                          "Major:  failure to log number of sighting error for missing mandatory tag " + self.RANDOM_LOG_FILE) 
-        self.deleteNamedLogFlag = True  
+#     def test300_091_ShouldLogErrorOnMissingMandatoryTag(self):
+#         'Verify that missing mandatory tag was flagged as sighting error'
+#         targetString = "Sighting errors:\t1"
+#         testFile = self.mapFileToTest("invalidWithMissingMandatoryTags")
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)   
+#         theFix.setStarFile(self.starFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
+#                           "Major:  failure to log number of sighting error for missing mandatory tag " + self.RANDOM_LOG_FILE) 
+#         self.deleteNamedLogFlag = True  
 
 #----------
-    def test300_092_ShouldLogErrorOnInvalidBody(self):
-        'Verify that invalid body tag was flagged as sighting error'
-        targetString = "Sighting errors:\t1"
-        testFile = self.mapFileToTest("invalidBodyTag")
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)   
-        theFix.setStarFile(self.starFileName)
-        theFix.getSightings()
-        
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
-                          "Minor:  failure to log number of sighting error for invalid body tag " + self.RANDOM_LOG_FILE)
-        self.deleteNamedLogFlag = True
+#     def test300_092_ShouldLogErrorOnInvalidBody(self):
+#         'Verify that invalid body tag was flagged as sighting error'
+#         targetString = "Sighting errors:\t1"
+#         testFile = self.mapFileToTest("invalidBodyTag")
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)   
+#         theFix.setStarFile(self.starFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
+#                           "Minor:  failure to log number of sighting error for invalid body tag " + self.RANDOM_LOG_FILE)
+#         self.deleteNamedLogFlag = True
 
 #----------
-    def test300_093_ShouldLogErrorOnInvalidDate(self):
-        'Verify that invalid date tag was flagged as sighting error'
-        targetString = "Sighting errors:\t1"
-        testFile = self.mapFileToTest("invalidDateTag")
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)   
-        theFix.setStarFile(self.starFileName)
-        theFix.getSightings()
-        
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
-                          "Major:  failure to log number of sighting error for invalid date tag " + self.RANDOM_LOG_FILE) 
-        self.deleteNamedLogFlag = True
+#     def test300_093_ShouldLogErrorOnInvalidDate(self):
+#         'Verify that invalid date tag was flagged as sighting error'
+#         targetString = "Sighting errors:\t1"
+#         testFile = self.mapFileToTest("invalidDateTag")
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)   
+#         theFix.setStarFile(self.starFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
+#                           "Major:  failure to log number of sighting error for invalid date tag " + self.RANDOM_LOG_FILE) 
+#         self.deleteNamedLogFlag = True
 
 #----------
-    def test300_094_ShouldLogErrorOnInvalidTime(self):
-        'Verify that invalid time tag was flagged as sighting error'
-        targetString = "Sighting errors:\t1"
-        testFile = self.mapFileToTest("invalidTimeTag")
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)   
-        theFix.setStarFile(self.starFileName)
-        theFix.getSightings()
-        
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
-                          "Major:  failure to log number of sighting error for invalid time tag " + self.RANDOM_LOG_FILE) 
-        self.deleteNamedLogFlag = True
+#     def test300_094_ShouldLogErrorOnInvalidTime(self):
+#         'Verify that invalid time tag was flagged as sighting error'
+#         targetString = "Sighting errors:\t1"
+#         testFile = self.mapFileToTest("invalidTimeTag")
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)   
+#         theFix.setStarFile(self.starFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
+#                           "Major:  failure to log number of sighting error for invalid time tag " + self.RANDOM_LOG_FILE) 
+#         self.deleteNamedLogFlag = True
         
 #----------
-    def test300_095_ShouldLogErrorOnInvalidObservation(self):
-        'Verify that invalid observation tag was flagged as sighting error'
-        targetString = "Sighting errors:\t1"
-        testFile = self.mapFileToTest("invalidObservationTag")
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)   
-        theFix.setStarFile(self.starFileName)
-        theFix.getSightings()
-        
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
-                          "Major:  failure to log number of sighting error for invalid observation tag " + self.RANDOM_LOG_FILE) 
-        self.deleteNamedLogFlag = True
-        
-
-#----------
-    def test300_096_ShouldLogErrorOnInvalidHeight(self):
-        'Verify that invalid height tag was flagged as sighting error'
-        targetString = "Sighting errors:\t1"
-        testFile = self.mapFileToTest("invalidHeightTag")
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)   
-        theFix.setStarFile(self.starFileName)
-        theFix.getSightings()
-        
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
-                          "Major:  failure to log number of sighting error for invalid height tag " + self.RANDOM_LOG_FILE) 
-        self.deleteNamedLogFlag = True
+#     def test300_095_ShouldLogErrorOnInvalidObservation(self):
+#         'Verify that invalid observation tag was flagged as sighting error'
+#         targetString = "Sighting errors:\t1"
+#         testFile = self.mapFileToTest("invalidObservationTag")
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)   
+#         theFix.setStarFile(self.starFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
+#                           "Major:  failure to log number of sighting error for invalid observation tag " + self.RANDOM_LOG_FILE) 
+#         self.deleteNamedLogFlag = True
         
 
 #----------
-    def test300_097_ShouldLogErrorOnInvalidTemperature(self):
-        'Verify that invalid temperature tag was flagged as sighting error'
-        targetString = "Sighting errors:\t1"
-        testFile = self.mapFileToTest("invalidTemperatureTag")
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setStarFile(self.starFileName)
-        theFix.setAriesFile(self.ariesFileName)
-        theFix.getSightings()
-        
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
-                          "Major:  failure to log number of sighting error for invalid temperature tag " + self.RANDOM_LOG_FILE) 
-        self.deleteNamedLogFlag = True
+#     def test300_096_ShouldLogErrorOnInvalidHeight(self):
+#         'Verify that invalid height tag was flagged as sighting error'
+#         targetString = "Sighting errors:\t1"
+#         testFile = self.mapFileToTest("invalidHeightTag")
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)   
+#         theFix.setStarFile(self.starFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
+#                           "Major:  failure to log number of sighting error for invalid height tag " + self.RANDOM_LOG_FILE) 
+#         self.deleteNamedLogFlag = True
         
 
 #----------
-    def test300_098_ShouldLogErrorOnInvalidPressure(self):
-        'Verify that invalid pressure tag was flagged as sighting error'
-        targetString = "Sighting errors:\t1"
-        testFile = self.mapFileToTest("invalidPressureTag")
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)   
-        theFix.setStarFile(self.starFileName)
-        theFix.getSightings()
+#     def test300_097_ShouldLogErrorOnInvalidTemperature(self):
+#         'Verify that invalid temperature tag was flagged as sighting error'
+#         targetString = "Sighting errors:\t1"
+#         testFile = self.mapFileToTest("invalidTemperatureTag")
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setStarFile(self.starFileName)
+#         theFix.setAriesFile(self.ariesFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
+#                           "Major:  failure to log number of sighting error for invalid temperature tag " + self.RANDOM_LOG_FILE) 
+#         self.deleteNamedLogFlag = True
         
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
-                          "Major:  failure to log number of sighting error for invalid pressure tag " + self.RANDOM_LOG_FILE) 
-        self.deleteNamedLogFlag = True
 
 #----------
-    def test300_099_ShouldLogErrorOnInvalidHorizon(self):
-        'Verify that invalid horizon tag was flagged as sighting error'
-        targetString = "Sighting errors:\t1"
-        testFile = self.mapFileToTest("invalidHorizonTag")
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setStarFile(self.starFileName)
-        theFix.setAriesFile(self.ariesFileName)
-        theFix.getSightings()
+#     def test300_098_ShouldLogErrorOnInvalidPressure(self):
+#         'Verify that invalid pressure tag was flagged as sighting error'
+#         targetString = "Sighting errors:\t1"
+#         testFile = self.mapFileToTest("invalidPressureTag")
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)   
+#         theFix.setStarFile(self.starFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
+#                           "Major:  failure to log number of sighting error for invalid pressure tag " + self.RANDOM_LOG_FILE) 
+#         self.deleteNamedLogFlag = True
+
+#----------
+#     def test300_099_ShouldLogErrorOnInvalidHorizon(self):
+#         'Verify that invalid horizon tag was flagged as sighting error'
+#         targetString = "Sighting errors:\t1"
+#         testFile = self.mapFileToTest("invalidHorizonTag")
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setStarFile(self.starFileName)
+#         theFix.setAriesFile(self.ariesFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
+#                           "Major:  failure to log number of sighting error for invalid horizon tag " + self.RANDOM_LOG_FILE) 
+#         self.deleteNamedLogFlag = True        
         
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        self.assertNotEquals(-1, self.indexInList(targetString, logFileContents),
-                          "Major:  failure to log number of sighting error for invalid horizon tag " + self.RANDOM_LOG_FILE) 
-        self.deleteNamedLogFlag = True        
-        
-    def test300_100_ShouldLogStarLatLon(self):
-        'log geographical position with no interpolation of observation'
-        testFile = self.mapFileToTest("validLatLon")
-        targetStringList = ["Sabik", None, None, None, "-15d44.4", "247d23.7"]
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)   
-        theFix.setStarFile(self.starFileName)
-        theFix.getSightings()
-        
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        sightingCount = 0
-        for logEntryNumber in range(0, len(logFileContents)):
-            if(logFileContents[logEntryNumber].find(targetStringList[0]) > -1):
-                sightingCount += 1
-                for target in targetStringList:
-                    if(target != None):
-                        self.assertNotEquals(-1, logFileContents[logEntryNumber].find(target), 
-                                         "Major:  Lat/Lon entry is not correct for getSightings " + self.RANDOM_LOG_FILE)
-        self.assertEquals(1, sightingCount)
-        self.deleteNamedLogFlag = True  
+#     def test300_100_ShouldLogStarLatLon(self):
+#         'log geographical position with no interpolation of observation'
+#         testFile = self.mapFileToTest("validLatLon")
+#         targetStringList = ["Sabik", None, None, None, "-15d44.4", "247d23.7"]
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)   
+#         theFix.setStarFile(self.starFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         sightingCount = 0
+#         for logEntryNumber in range(0, len(logFileContents)):
+#             if(logFileContents[logEntryNumber].find(targetStringList[0]) > -1):
+#                 sightingCount += 1
+#                 for target in targetStringList:
+#                     if(target != None):
+#                         self.assertNotEquals(-1, logFileContents[logEntryNumber].find(target), 
+#                                          "Major:  Lat/Lon entry is not correct for getSightings " + self.RANDOM_LOG_FILE)
+#         self.assertEquals(1, sightingCount)
+#         self.deleteNamedLogFlag = True  
         
          
 #-----------        
-    def test300_110_ShouldLogStarLatLonWithInterpolation(self):
-        'log geographical position'
-        testFile = self.mapFileToTest("validLatLonInterpolated")
-        targetStringList = ["Betelgeuse", None, None, None, "7d24.3", "75d54.3"]
-        theFix = F.Fix(self.RANDOM_LOG_FILE)
-        theFix.setSightingFile(testFile)
-        theFix.setAriesFile(self.ariesFileName)   
-        theFix.setStarFile(self.starFileName)
-        theFix.getSightings()
+#     def test300_110_ShouldLogStarLatLonWithInterpolation(self):
+#         'log geographical position'
+#         testFile = self.mapFileToTest("validLatLonInterpolated")
+#         targetStringList = ["Betelgeuse", None, None, None, "7d24.3", "75d54.3"]
+#         theFix = F.Fix(self.RANDOM_LOG_FILE)
+#         theFix.setSightingFile(testFile)
+#         theFix.setAriesFile(self.ariesFileName)   
+#         theFix.setStarFile(self.starFileName)
+#         theFix.getSightings()
+#         
+#         theLogFile = open(self.RANDOM_LOG_FILE, "r")
+#         logFileContents = theLogFile.readlines()
+#         theLogFile.close()
+#         
+#         sightingCount = 0
+#         for logEntryNumber in range(0, len(logFileContents)):
+#             if(logFileContents[logEntryNumber].find(targetStringList[0]) > -1):
+#                 sightingCount += 1
+#                 for target in targetStringList:
+#                     if(target != None):
+#                         self.assertNotEquals(-1, logFileContents[logEntryNumber].find(target), 
+#                                          "Major:  Lat/Lon entry is not correct for getSightings " + self.RANDOM_LOG_FILE)
+#         self.assertEquals(1, sightingCount)
+#         self.deleteNamedLogFlag = True  
         
-        theLogFile = open(self.RANDOM_LOG_FILE, "r")
-        logFileContents = theLogFile.readlines()
-        theLogFile.close()
-        
-        sightingCount = 0
-        for logEntryNumber in range(0, len(logFileContents)):
-            if(logFileContents[logEntryNumber].find(targetStringList[0]) > -1):
-                sightingCount += 1
-                for target in targetStringList:
-                    if(target != None):
-                        self.assertNotEquals(-1, logFileContents[logEntryNumber].find(target), 
-                                         "Major:  Lat/Lon entry is not correct for getSightings " + self.RANDOM_LOG_FILE)
-        self.assertEquals(1, sightingCount)
-        self.deleteNamedLogFlag = True  
-        
-        
+
+
+
 #---------- 
     def test300_910_ShouldRaiseExceptionOnNotSettingSightingsFile(self):
         'Raise exception on failure to set sighting file'
@@ -1097,7 +1099,37 @@ class TestFix(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             theFix.getSightings()
         self.assertEquals(expectedDiag, context.exception.args[0][0:len(expectedDiag)],
-                          "Major:  failure to set aries file before getSightings()")     
+                          "Major:  failure to set aries file before getSightings()")
+        
+    def test300_940_ShouldRaiseExceptionOnInvalidAssumedLatitude(self):
+        expectedDiag = self.className + "getSightings:"
+        theFix = F.Fix()
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
+        with self.assertRaises(ValueError) as context:
+            theFix.getSightings("N98d59.5", "85d33.4")
+        self.assertEquals(expectedDiag, context.exception.args[0][0:len(expectedDiag)],
+                          "Major:  failure to set sighting file before getSightings()") 
+        
+    def test300_941_ShouldRaiseExceptionOnInvalidAssumedLatitude(self):
+        expectedDiag = self.className + "getSightings:"
+        theFix = F.Fix()
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
+        with self.assertRaises(ValueError) as context:
+            theFix.getSightings("N0d0.0", "85d33.4")
+        self.assertEquals(expectedDiag, context.exception.args[0][0:len(expectedDiag)],
+                          "Major:  failure to set sighting file before getSightings()")
+        
+    def test300_942_ShouldRaiseExceptionOnInvalidAssumedLatitude(self):
+        expectedDiag = self.className + "getSightings:"
+        theFix = F.Fix()
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
+        with self.assertRaises(ValueError) as context:
+            theFix.getSightings("3d0.0", "85d33.4")
+        self.assertEquals(expectedDiag, context.exception.args[0][0:len(expectedDiag)],
+                          "Major:  failure to set sighting file before getSightings()") 
 
 #  helper methods
     def indexInList(self, target, searchList):
