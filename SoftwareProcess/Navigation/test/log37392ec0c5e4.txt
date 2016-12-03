@@ -1,0 +1,6 @@
+LOG: 2016-12-02 17:59:59 Log file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/log37392ec0c5e4.txt
+LOG: 2016-12-02 17:59:59 Sighting file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA03_300_ValidStarLatLonInterpolationRequired.xml
+LOG: 2016-12-02 17:59:59 Aries file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA03_Valid_Aries.txt
+LOG: 2016-12-02 17:59:59 Star file:	/Users/boningliang/SoftwareProcess/SoftwareProcess/Navigation/test/CA03_Valid_Stars.txt
+LOG: 2016-12-02 17:59:59 Betelgeuse	2017-01-16	03:15:42	9d54.7	7d24.3	74d55.2	
+LOG: 2016-12-02 17:59:59 Sighting errors:	0
