@@ -21,6 +21,7 @@ class TestFix(unittest.TestCase):
             ["validAriesFile", "CA03_Valid_Aries.txt"],           
             ["validStarFile", "CA03_Valid_Stars.txt"], 
             ["genericValidStarSightingFile", "CA02_300_GenericValidStarSightingFile.xml"], 
+            ["genericValidStarSightingFile2", "CA05_300_GenericValidStarSightingFile.xml"], 
             ["genericValidSightingFileWithMixedIndentation", "CA02_300_ValidWithMixedIndentation.xml"],
             ["validOneStarSighting", "CA02_300_ValidOneStarSighting.xml"],
             ["validMultipleStarSighting", "CA02_300_ValidMultipleStarSighting.xml"],
@@ -616,6 +617,46 @@ class TestFix(unittest.TestCase):
         self.assertTupleEqual(expectedResult, result, 
                               "Minor:  incorrect return value from getSightings")
         
+    
+    def test300_011_ShouldLogOneSighting(self):
+        'log one valid adjusted altitude'
+        testFile = self.mapFileToTest("genericValidStarSightingFile")
+        targetStringList = ["Pollux", "2017-04-17", "23:50:14", "15d1.5", "27d59.1", "87d30.8", "N27d59.5", "85d33.4", "7d21.1", "-2919.0"]
+        theFix = F.Fix(self.RANDOM_LOG_FILE)
+        theFix.setSightingFile(testFile)
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
+        theFix.getSightings("N27d59.5", "85d33.4")
+          
+        theLogFile = open(self.RANDOM_LOG_FILE, "r")
+        logFileContents = theLogFile.readlines()
+        theLogFile.close()
+          
+        sightingCount = 0
+        for logEntryNumber in range(0, len(logFileContents)):
+            if(logFileContents[logEntryNumber].find(targetStringList[0]) > -1):
+                sightingCount += 1
+                for target in targetStringList:
+                    self.assertNotEquals(-1, logFileContents[logEntryNumber].find(target), 
+                                         "Major:  Log entry is not correct for getSightings " + self.RANDOM_LOG_FILE)
+        self.assertEquals(1, sightingCount)
+        self.deleteNamedLogFlag = True  
+        
+        
+        
+    def test300_012_ShouldIgnoreMixedIndentation(self):
+        'parse sighting file that valid tags'
+        testFile = self.mapFileToTest("genericValidStarSightingFile2")
+        expectedResult = ("S13d28.0", "101d42.2")
+        theFix = F.Fix()
+        theFix.setSightingFile(testFile)
+        theFix.setStarFile(self.starFileName)
+        theFix.setAriesFile(self.ariesFileName)
+        result = theFix.getSightings("S53d38.4", "74d35.3")
+        print "print from test code - result: ",result
+        self.assertTupleEqual(expectedResult, result, 
+                              "Minor:  incorrect return value from getSightings")
+        
 #---------- 
     def test300_020_ShouldIgnoreMixedIndentation(self):
         'parse sighting file that has mixed indentation'
@@ -1130,7 +1171,17 @@ class TestFix(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             theFix.getSightings("3d0.0", "85d33.4")
         self.assertEquals(expectedDiag, context.exception.args[0][0:len(expectedDiag)],
-                          "Major:  failure to set sighting file before getSightings()") 
+                          "Major:  failure to set sighting file before getSightings()")
+        
+    def test300_943_ShouldRaiseExceptionOnInvalidAssumedLongitude(self):
+        expectedDiag = self.className + "getSightings:"
+        theFix = F.Fix()
+        theFix.setAriesFile(self.ariesFileName)   
+        theFix.setStarFile(self.starFileName)
+        with self.assertRaises(ValueError) as context:
+            theFix.getSightings("N3d0.0", "985d33.4")
+        self.assertEquals(expectedDiag, context.exception.args[0][0:len(expectedDiag)],
+                          "Minor:  failure to check assumed longitude")
 
 #  helper methods
     def indexInList(self, target, searchList):
